@@ -16,7 +16,9 @@ public class Main {
         long INF = Long.MAX_VALUE;
         long[] dist = new long[n + 1];
         Arrays.fill(dist, INF);
-        PriorityQueue<long[]> pq = new PriorityQueue<>((a, b) -> Long.compare(a[0], b[0]));
+        PriorityQueue<long[]> pq = new PriorityQueue<long[]>(11, new Comparator<long[]>() {
+            public int compare(long[] a, long[] b) { return Long.compare(a[0], b[0]); }
+        });
         dist[1] = 0; pq.add(new long[]{0, 1});
         while (!pq.isEmpty()) {
             long[] cur = pq.poll();

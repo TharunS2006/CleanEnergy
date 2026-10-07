@@ -15,7 +15,9 @@ public class Main {
         int INF = Integer.MAX_VALUE;
         int[] dist = new int[n + 1];
         Arrays.fill(dist, INF);
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> b[0] - a[0]);
+        PriorityQueue<int[]> pq = new PriorityQueue<int[]>(11, new Comparator<int[]>() {
+            public int compare(int[] a, int[] b) { return b[0] - a[0]; }
+        });
         dist[1] = 0; pq.add(new int[]{0, 1});
         while (!pq.isEmpty()) {
             int[] cur = pq.poll();
