@@ -1,0 +1,8 @@
+2 7
+PUT 1 1
+PUT 2 2
+PUT 1 100
+PUT 3 3
+GET 1
+GET 2
+GET 3
