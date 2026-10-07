@@ -12,3 +12,9 @@ Each folder has `statement.md`, `buggy.*` (paste into the HackerRank code stub f
 language), `fixed.*` (answer key, keep private) and `tests/NN.in|out` (first test = sample).
 
 `python3 build.py` regenerates everything and checks: fixed passes all tests, buggy fails at least one.
+
+## All three languages
+Every question now has `buggy`/`fixed` in C++, Java and Python. Enable all three languages in HackerRank and
+paste the matching buggy stub for each language. `python3 validate.py` checks all 30 files
+(each fixed passes every test, each buggy fails at least one). `build.py` regenerates the tests and the
+original-language files only.
