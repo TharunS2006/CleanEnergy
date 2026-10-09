@@ -1,0 +1,14 @@
+services:
+  cloudpulse:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: sqlite:////app/db/cloudpulse.db
+    volumes:
+      - cloudpulse_db:/app/db
+
+volumes:
+  cloudpulse_db:

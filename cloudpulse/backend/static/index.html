@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CloudPulse</title>
+<meta name="description" content="Cloud cost findings that get owned, fixed and verified.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231b1a17'/%3E%3Cpath d='M5 17h6l2.5-6 4 11 3-8 1.5 3H27' fill='none' stroke='%23fbfaf7' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" href="/static/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/static/app.css">
+<link rel="stylesheet" href="/static/login.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-overview" viewBox="0 0 20 20"><rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="11" y="3" width="6" height="4" rx="1.5"/><rect x="11" y="9" width="6" height="8" rx="1.5"/><rect x="3" y="11" width="6" height="6" rx="1.5"/></symbol>
+    <symbol id="i-costs" viewBox="0 0 20 20"><path d="M3 17h14"/><path d="M5.5 14V9"/><path d="M10 14V5"/><path d="M14.5 14v-3"/></symbol>
+    <symbol id="i-waste" viewBox="0 0 20 20"><path d="M10 2.8c2.6 3.3 4.6 6 4.6 8.6a4.6 4.6 0 0 1-9.2 0c0-2.6 2-5.3 4.6-8.6Z"/><path d="M8 12.2a2 2 0 0 0 2 2"/></symbol>
+    <symbol id="i-owners" viewBox="0 0 20 20"><circle cx="8" cy="7" r="3"/><path d="M2.8 16.5c.7-2.8 2.7-4.3 5.2-4.3s4.5 1.5 5.2 4.3"/><path d="M13 4.3a3 3 0 0 1 0 5.4"/><path d="M15 12.6c1.2.6 2 1.9 2.3 3.9"/></symbol>
+    <symbol id="i-anomalies" viewBox="0 0 20 20"><path d="M2.5 11h3l2-5 3.5 9 2.2-6 1.3 2h3"/></symbol>
+    <symbol id="i-budgets" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><circle cx="10" cy="10" r="3.5"/><path d="M10 10l4.5-4.5"/></symbol>
+    <symbol id="i-sources" viewBox="0 0 20 20"><ellipse cx="10" cy="5" rx="6" ry="2.3"/><path d="M4 5v10c0 1.3 2.7 2.3 6 2.3s6-1 6-2.3V5"/><path d="M4 10c0 1.3 2.7 2.3 6 2.3s6-1 6-2.3"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 20 20"><path d="M16 10a6 6 0 1 1-1.8-4.3"/><path d="M16 3.5v3.3h-3.3"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 20 20"><path d="M3 6h14M3 10h14M3 14h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 20 20"><path d="M5 5l10 10M15 5L5 15"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 20 20"><rect x="7" y="7" width="9" height="9" rx="2"/><path d="M13 7V5.5A1.5 1.5 0 0 0 11.5 4h-6A1.5 1.5 0 0 0 4 5.5v6A1.5 1.5 0 0 0 5.5 13H7"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 20 20"><path d="M5 10h10M11 6l4 4-4 4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 20 20"><circle cx="9" cy="9" r="5"/><path d="M13 13l4 4"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 20 20"><path d="M10 2.8 4 5v4.6c0 3.7 2.5 6.4 6 7.6 3.5-1.2 6-3.9 6-7.6V5l-6-2.2Z"/><path d="M7.5 10l1.8 1.8 3.4-3.6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 20 20"><path d="M10 4v12M4 10h12"/></symbol>
+    <symbol id="i-findings" viewBox="0 0 20 20"><path d="M4 4.5h12M4 10h12M4 15.5h7"/><circle cx="15" cy="15.5" r="2"/></symbol>
+    <symbol id="i-savings" viewBox="0 0 20 20"><path d="M3 15.5 8 10l3 3 6-7"/><path d="M13 6h4v4"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 20 20"><path d="M5 13.5V9a5 5 0 0 1 10 0v4.5l1.5 1.5h-13L5 13.5Z"/><path d="M8.3 17a1.9 1.9 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-audit" viewBox="0 0 20 20"><rect x="4" y="3" width="12" height="14" rx="2"/><path d="M7 7h6M7 10h6M7 13h3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 20 20"><path d="M10 3v10M6 9l4 4 4-4M4 16h12"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Main">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect width="32" height="32" rx="8" class="brand-tile"/><path d="M5 17h6l2.5-6 4 11 3-8 1.5 3H27" fill="none" class="brand-line" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>CloudPulse</span>
+      <button class="icon-btn only-mobile" id="close-nav" aria-label="Close menu"><svg><use href="#i-close"/></svg></button>
+    </div>
+
+    <label class="ws-switch" id="ws-switch-wrap" hidden>
+      <span class="sr-only">Workspace</span>
+      <span class="ws-kicker">Workspace</span>
+      <select id="ws-select"></select>
+    </label>
+
+    <nav class="nav">
+      <p class="nav-heading">Monitor</p>
+      <a href="#/overview" data-page="overview"><svg><use href="#i-overview"/></svg>Overview</a>
+      <a href="#/costs" data-page="costs"><svg><use href="#i-costs"/></svg>Cost explorer</a>
+      <a href="#/anomalies" data-page="anomalies"><svg><use href="#i-anomalies"/></svg>Anomalies<span class="count" id="nav-anomalies" hidden></span></a>
+      <a href="#/budgets" data-page="budgets"><svg><use href="#i-budgets"/></svg>Budgets</a>
+      <p class="nav-heading">Act</p>
+      <a href="#/findings" data-page="findings"><svg><use href="#i-findings"/></svg>Findings<span class="count" id="nav-findings" hidden></span></a>
+      <a href="#/owners" data-page="owners"><svg><use href="#i-owners"/></svg>Owners</a>
+      <a href="#/savings" data-page="savings"><svg><use href="#i-savings"/></svg>Savings</a>
+      <p class="nav-heading">Setup</p>
+      <a href="#/sources" data-page="sources"><svg><use href="#i-sources"/></svg>Data sources</a>
+      <p class="nav-heading" data-admin hidden>Administration</p>
+      <a href="#/admin" data-page="admin" data-admin hidden><svg><use href="#i-shield"/></svg>Workspaces &amp; users</a>
+      <a href="#/audit" data-page="audit" data-admin hidden><svg><use href="#i-audit"/></svg>Audit log</a>
+    </nav>
+
+    <div class="sidebar-foot" id="sidebar-foot">
+      <div class="source-pill" id="source-pill"><span class="dot"></span><span>Loading…</span></div>
+      <p class="muted small" id="last-read">&nbsp;</p>
+      <div class="user-box">
+        <span id="user-avatar"></span>
+        <div class="user-id"><b id="user-name">&nbsp;</b><span id="user-role" class="muted small"></span></div>
+      </div>
+      <div class="user-actions">
+        <button class="linkbtn" type="button" id="change-pw">Change password</button>
+        <button class="linkbtn" type="button" id="sign-out">Sign out</button>
+      </div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn only-mobile" id="open-nav" aria-label="Open menu"><svg><use href="#i-menu"/></svg></button>
+      <div class="page-title">
+        <h1 id="page-title">Overview</h1>
+        <p id="page-sub" class="muted"></p>
+      </div>
+      <div class="controls" id="controls">
+        <div class="seg" role="radiogroup" aria-label="Bill" id="book-switch"></div>
+        <label class="select">
+          <span class="sr-only">Provider</span>
+          <select id="provider-select"></select>
+        </label>
+        <div class="seg" role="radiogroup" aria-label="Time range" id="range-switch">
+          <button type="button" role="radio" data-days="7">7D</button>
+          <button type="button" role="radio" data-days="30">30D</button>
+          <button type="button" role="radio" data-days="90">90D</button>
+        </div>
+        <span class="badge outline" id="readonly-pill" hidden title="You can look but not change anything in this workspace">Read-only</span>
+        <button class="icon-btn bell" id="bell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notif-panel"><svg><use href="#i-bell"/></svg><span class="dot" id="bell-dot" hidden></span></button>
+        <button class="btn btn-primary" id="refresh" type="button"><svg><use href="#i-refresh"/></svg><span>Sync</span></button>
+      </div>
+    </header>
+
+    <div class="banner" id="banner" hidden></div>
+    <div class="sync-strip" id="sync-strip" role="status" hidden><span class="spinner" aria-hidden="true"></span><span><b>Syncing</b> · <span id="sync-step">Starting</span></span></div>
+    <main id="page" class="page" tabindex="-1"></main>
+  </div>
+</div>
+
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
+  <div class="drawer-panel" id="drawer-panel">
+    <header class="drawer-head">
+      <div>
+        <p class="muted small" id="drawer-kicker"></p>
+        <h2 id="drawer-title"></h2>
+      </div>
+      <button class="icon-btn" id="drawer-close" aria-label="Close"><svg><use href="#i-close"/></svg></button>
+    </header>
+    <div class="drawer-actions" id="drawer-actions"></div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </div>
+</div>
+
+<div class="modal" id="pw-modal" role="dialog" aria-modal="true" aria-labelledby="pw-title" hidden>
+  <form class="modal-panel" id="pw-form" novalidate>
+    <h2 id="pw-title">Change your password</h2>
+    <p class="muted" id="pw-intro">At least 10 characters, with upper and lower case letters and a number.</p>
+    <label class="field"><span>Current password</span><input type="password" id="pw-current" autocomplete="current-password" required></label>
+    <label class="field"><span>New password</span><input type="password" id="pw-new" autocomplete="new-password" required></label>
+    <label class="field"><span>Repeat new password</span><input type="password" id="pw-repeat" autocomplete="new-password" required></label>
+    <p class="form-error" id="pw-error" role="alert" hidden></p>
+    <div class="modal-actions">
+      <button class="btn" type="button" id="pw-cancel">Cancel</button>
+      <button class="btn btn-primary" type="submit">Save password</button>
+    </div>
+  </form>
+</div>
+
+<section class="notif-panel" id="notif-panel" aria-label="Notifications" hidden>
+  <header><h2>Notifications</h2><button class="linkbtn" type="button" id="notif-read-all">Mark all read</button></header>
+  <div class="notif-list" id="notif-list"></div>
+</section>
+
+<div class="tooltip" id="tooltip" role="status" hidden></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="/static/charts.js" defer></script>
+<script src="/static/app.js" defer></script>
+</body>
+</html>

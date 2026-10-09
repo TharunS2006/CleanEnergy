@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in · CloudPulse</title>
+<meta name="description" content="Cloud spend, waste and who's behind it.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231b1a17'/%3E%3Cpath d='M5 17h6l2.5-6 4 11 3-8 1.5 3H27' fill='none' stroke='%23fbfaf7' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" href="/static/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/static/app.css">
+<link rel="stylesheet" href="/static/login.css">
+</head>
+<body class="login-body">
+<main class="login">
+  <section class="login-panel">
+    <a class="login-brand" href="/login" aria-label="CloudPulse">
+      <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect width="32" height="32" rx="8" class="brand-tile"/><path d="M5 17h6l2.5-6 4 11 3-8 1.5 3H27" fill="none" class="brand-line" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      CloudPulse
+    </a>
+
+    <div class="login-form-wrap">
+      <h1>Sign in</h1>
+      <p class="muted">Use the account your CloudPulse administrator gave you.</p>
+
+      <form id="login-form" class="login-form" novalidate>
+        <label>
+          <span>Email</span>
+          <input id="email" name="email" type="email" autocomplete="username" required autofocus>
+        </label>
+        <label>
+          <span>Password</span>
+          <span class="pw-wrap">
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" id="pw-toggle" aria-label="Show password" aria-pressed="false">Show</button>
+          </span>
+        </label>
+        <p class="form-error" id="login-error" role="alert" hidden></p>
+        <button class="btn btn-primary btn-block" type="submit" id="login-submit">Sign in</button>
+      </form>
+
+      <div class="divider"><span>or</span></div>
+
+      <button class="btn btn-block" type="button" id="demo-btn">Explore the demo</button>
+      <p class="muted small demo-note">No account needed. Read-only, using the FinOps Foundation's sample bill and example resources.</p>
+    </div>
+
+    <p class="muted small login-foot">Forgot your password? Ask your CloudPulse administrator to reset it.</p>
+  </section>
+
+  <aside class="login-aside" aria-hidden="true">
+    <div class="aside-inner">
+      <p class="aside-kicker">Cloud cost monitoring</p>
+      <p class="aside-quote">“<b>$123.73 a month</b> is going to 7 idle resources, and CloudPulse traced who created 6 of them.”</p>
+      <div class="aside-card">
+        <div class="aside-row"><span class="avatar" style="background:#355c8c">AK</span><div><b>gpu-trial-01</b><small>Virtual machine · stopped, still billed</small></div><strong>$70.08</strong></div>
+        <div class="aside-row"><span class="avatar" style="background:#2f6b55">CD</span><div><b>db-backup-old</b><small>EBS volume · attached to nothing</small></div><strong>$16.00</strong></div>
+        <div class="aside-row"><span class="avatar" style="background:#8a4f24">MO</span><div><b>load-test-runner</b><small>EC2 instance · stopped, disks still bill</small></div><strong>$8.00</strong></div>
+      </div>
+      <ul class="aside-points">
+        <li>Spend across Azure and AWS, day by day</li>
+        <li>Idle disks, IPs, snapshots and machines, priced</li>
+        <li>Who created each one, from audit logs, no tags needed</li>
+      </ul>
+    </div>
+  </aside>
+</main>
+<script src="/static/login.js" defer></script>
+</body>
+</html>
