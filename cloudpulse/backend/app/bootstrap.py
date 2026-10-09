@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.models import CloudConnection, Membership, User, Workspace
 from app.security import generate_password, hash_password
-from app.services.connections import env_aws_configured, env_azure_auth
+from app.services.connections import azure_env_problems, env_aws_configured, env_azure_auth
 
 log = logging.getLogger("cloudpulse")
 
@@ -75,6 +75,11 @@ def ensure_env_workspace(db: Session):
     wants_aws = env_aws_configured()
     existing = db.query(CloudConnection).filter_by(auth="env").all()
     if not (wants_azure or wants_aws) and not existing:
+        if not db.query(Workspace).filter(Workspace.kind != "demo").first():
+            log.warning("No real cloud workspace: only the sample demo is available. %s "
+                        "Fix backend/.env and restart, or use Workspaces & users -> Connect Azure. "
+                        "Test with: python -m app.manage check-azure",
+                        "; ".join(azure_env_problems()) + ".")
         return
 
     ws = None

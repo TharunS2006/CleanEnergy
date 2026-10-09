@@ -187,7 +187,7 @@
     if (PAGES[current()] && PAGES[current()].admin) {
       html = "";
     } else if (w && w.kind === "demo") {
-      html = `<span><b>You're in the demo.</b> Spend is the FinOps Foundation's FOCUS sample bill (real, anonymised company data). The findings are examples, but their scores, forecasts and savings checks are calculated by the same code that runs on a live account. Nothing here can be changed.</span>`;
+      html = `<span><b>You're in the demo.</b> Spend is the FinOps Foundation's FOCUS sample bill (real, anonymised company data). The findings are examples, but their scores, forecasts and savings checks are calculated by the same code that runs on a live account. Nothing here can be changed.${S.me.is_admin && !S.me.workspaces.some((w) => w.kind !== "demo") ? ` <b>This is not your Azure data.</b> <a href="#/admin">Connect your Azure subscription</a> to monitor real resources and costs.` : ""}</span>`;
     } else if (meta && meta.book === "focus") {
       html = `<span>Spend shown is from the imported file <b>${esc(meta.dataset || "FOCUS export")}</b>.${connected ? " Resource findings and owners come from the connected account." : ""}</span>`;
     } else if (conn && !(conn.items || []).length) {

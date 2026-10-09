@@ -76,3 +76,21 @@ automatically; check **Data sources** for progress.
 | Sync fails with 403 on costs | Grant **Cost Management Reader** at subscription scope |
 | Saved connection stops working after restart | Set a fixed `APP_SECRET_KEY` |
 | Text looks faint | Hard-refresh the browser (cached old `app.css`) |
+
+## Still seeing the demo ("Demo data", $2,829.99 from Sept 2024)?
+
+That is the built-in sample bill, not your Azure account. Your real data only
+appears in a separate workspace, created when the app starts with complete Azure
+settings. To fix it:
+
+1. From `cloudpulse/backend`, run `python -m app.manage check-azure`. It tells you
+   exactly what is missing (empty subscription ID, incomplete service principal,
+   bad secret, no Reader role) or prints `Connected: <subscription name>`.
+2. Make sure `backend/.env` exists (copy `.env.example`) and you start the server
+   from the `backend` folder. With Docker, the file is read via `env_file`.
+3. Restart the server. The startup log says "Created workspace ... from server
+   settings", or prints why no real workspace exists.
+4. In the app, use the workspace switcher (top of the sidebar) to pick your
+   workspace instead of "Demo company". Or skip `.env` entirely and use
+   **Workspaces & users -> New workspace -> Connect Azure** as the admin.
+5. Press **Sync**. Resources and owners appear in minutes; costs after 8 to 24 hours.

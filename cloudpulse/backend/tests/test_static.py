@@ -16,3 +16,21 @@ def test_every_page_has_a_renderer():
     js = (STATIC / "app.js").read_text()
     for page in re.findall(r"render: (render\w+)", js):
         assert re.search(rf"function {page}\b|const {page}\b", js), f"{page} is not defined"
+
+
+def test_azure_env_problems_explain_what_is_missing(monkeypatch):
+    from app.config import settings
+    from app.services import connections
+
+    for k in ("AZURE_SUBSCRIPTION_ID", "AZURE_TENANT_ID", "AZURE_CLIENT_ID", "AZURE_CLIENT_SECRET"):
+        monkeypatch.setattr(settings, k, "")
+    monkeypatch.setattr(settings, "AZURE_USE_CLI", False)
+    monkeypatch.setattr(settings, "AZURE_USE_MANAGED_IDENTITY", False)
+    assert any("AZURE_SUBSCRIPTION_ID" in p for p in connections.azure_env_problems())
+
+    monkeypatch.setattr(settings, "AZURE_SUBSCRIPTION_ID", "sub")
+    monkeypatch.setattr(settings, "AZURE_CLIENT_ID", "id")
+    assert any("AZURE_TENANT_ID" in p for p in connections.azure_env_problems())
+
+    monkeypatch.setattr(settings, "AZURE_USE_CLI", True)
+    assert connections.azure_env_problems() == []

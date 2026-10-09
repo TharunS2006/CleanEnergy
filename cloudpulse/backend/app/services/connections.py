@@ -55,6 +55,24 @@ def env_azure_auth() -> str | None:
     return None
 
 
+def azure_env_problems() -> list[str]:
+    """Why the server's Azure settings aren't usable (empty list when they are)."""
+    if env_azure_auth():
+        return []
+    out = []
+    if not settings.AZURE_SUBSCRIPTION_ID:
+        out.append("AZURE_SUBSCRIPTION_ID is empty (is backend/.env present, and are you running from the backend folder?)")
+    have = {"AZURE_TENANT_ID": settings.AZURE_TENANT_ID, "AZURE_CLIENT_ID": settings.AZURE_CLIENT_ID,
+            "AZURE_CLIENT_SECRET": settings.AZURE_CLIENT_SECRET}
+    missing = [k for k, v in have.items() if not v]
+    if missing and len(missing) < 3:
+        out.append("Service principal is incomplete; missing " + ", ".join(missing))
+    if not settings.AZURE_USE_CLI and not settings.AZURE_USE_MANAGED_IDENTITY and len(missing) == 3:
+        out.append("No sign-in method set: fill AZURE_TENANT_ID / AZURE_CLIENT_ID / AZURE_CLIENT_SECRET, "
+                   "or set AZURE_USE_CLI=true (after `az login`)")
+    return out or ["Azure settings are incomplete"]
+
+
 def env_aws_configured() -> bool:
     return bool(os.getenv("AWS_ACCESS_KEY_ID") and os.getenv("AWS_SECRET_ACCESS_KEY"))
 

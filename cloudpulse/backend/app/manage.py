@@ -5,13 +5,33 @@
     python -m app.manage create-user person@company.com --workspace my-cloud --role owner
     python -m app.manage reset-password person@company.com
     python -m app.manage workspaces
+    python -m app.manage check-azure     # test the Azure settings in .env
 """
 import argparse
 import sys
 
 from app.database import SessionLocal, init_db
 from app.models import Membership, User, Workspace
+from app.services.connections import azure_env_problems  # noqa: E402
 from app.security import end_all_sessions, generate_password, hash_password
+
+
+def check_azure():
+    from app.config import settings
+    from app.services import azure_collector
+    from app.services.connections import AZURE_AUTH_LABELS, AzureTarget, _azure_factory, env_azure_auth
+
+    problems = azure_env_problems()
+    if problems:
+        sys.exit("Azure is not configured:\n  - " + "\n  - ".join(problems))
+    auth = env_azure_auth()
+    print(f"Signing in with: {AZURE_AUTH_LABELS[auth]}")
+    target = AzureTarget(settings.AZURE_SUBSCRIPTION_ID, auth,
+                         _azure_factory(auth, settings.AZURE_TENANT_ID, settings.AZURE_CLIENT_ID,
+                                        settings.AZURE_CLIENT_SECRET))
+    ok, info = azure_collector.check_connection(target)
+    print(("Connected: " if ok else "FAILED: ") + info)
+    sys.exit(0 if ok else 1)
 
 
 def main(argv=None):
@@ -19,6 +39,7 @@ def main(argv=None):
     sub = p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("list", help="list users")
     sub.add_parser("workspaces", help="list workspaces")
+    sub.add_parser("check-azure", help="test the Azure sign-in configured in .env")
     a = sub.add_parser("create-admin")
     a.add_argument("email")
     u = sub.add_parser("create-user")
@@ -28,6 +49,9 @@ def main(argv=None):
     r = sub.add_parser("reset-password")
     r.add_argument("email")
     args = p.parse_args(argv)
+
+    if args.cmd == "check-azure":
+        return check_azure()
 
     init_db()
     db = SessionLocal()
