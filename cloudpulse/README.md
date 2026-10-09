@@ -134,6 +134,8 @@ The scripts read your subscription's allowed regions (Azure for Students limits 
 
 Treat the client secret like a password. Keep it out of chats, screenshots and git.
 
+A step-by-step guide with the exact `.env` names is in [docs/REAL_AZURE_SETUP.md](docs/REAL_AZURE_SETUP.md).
+
 ---
 
 ## 4. First steps as administrator
