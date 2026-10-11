@@ -94,7 +94,7 @@ def chapter1(r):
         "verified but are not counted as savings.",
     ])
     r.h(2, "1.7  Organisation of the Report")
-    r.para("Chapter 2 states the objectives and requirements. Chapter 3 lists the tools and technologies. Chapter 4 presents "
+    r.para("Chapter 2 states the objectives and requirements. Chapter 3 lists the tools and technologies and the cloud computing concepts applied. Chapter 4 presents "
            "the system architecture, including how Azure credentials are created, stored and used. Chapter 5 explains the "
            "methodology: data collection, detection rules, the anomaly, forecast, priority and verification algorithms, the "
            "finding lifecycle and the test environment. Chapter 6 shows and explains the results with screenshots of the "

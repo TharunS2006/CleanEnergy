@@ -5,7 +5,7 @@ import re, subprocess, sys, pathlib
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Cm, Pt
 from docbuilder import Report, _set_font, _shade
-import content_ch1_3 as c13, content_ch4_5 as c45, content_ch6_8 as c68
+import content_ch1_3 as c13, content_ch4_5 as c45, content_ch6_8 as c68, content_modules as cm
 
 HERE = pathlib.Path(__file__).parent
 TITLE = "CLOUDPULSE: A CLOUD COST MONITORING AND OPTIMISATION PLATFORM WITH OWNERSHIP ATTRIBUTION AND VERIFIED SAVINGS"
@@ -152,7 +152,7 @@ def build(out_docx, pages, captions_hint):
     r.start_body()
     c13.chapter1(r); r.page_break()
     c13.chapter2(r); r.page_break()
-    c13.chapter3(r); r.page_break()
+    c13.chapter3(r); cm.modules(r); r.page_break()
     c45.chapter4(r); r.page_break()
     c45.chapter5(r); r.page_break()
     c68.chapter6(r); r.page_break()
