@@ -1,0 +1,117 @@
+AgriChill Advisor: helping Tamil Nadu farmer groups hold tomatoes a few days longer
+and sell at a fairer price
+Participants: TAMILMANI B, THARUN S. Faculty mentor: Dr.M. Arun Manicka Raja.
+
+Background
+In 2019, farmers in Rayakottai (Krishnagiri) and Valappadi (Salem) tipped tomatoes into lakes after the price fell from
+about Rs 20 to Rs 2 a kilo. A union leader said too many farmers had planted tomato, a short-season crop. Another
+report said rural cold storage was not enough. Nationally, a government study put yearly fruit and vegetable losses
+at Rs 16,644 crore and Rs 14,842 crore. Farmer groups in Andhra Pradesh and Maharashtra now run pay-as-you-use
+cold storage, and a SELCO Foundation study says high up-front cost holds solar cold rooms back. We have not found
+a simple tool for the small group that runs such a room. That is our guess, and we will test it with farmers in month
+one.
+
+
+
+
+Figure 1. Reported evidence used in this proposal.
+
+
+Problem
+Harvest arrives all at once, and tomatoes will not wait. A farmer with three tonnes on a truck either takes the
+trader's offer or throws the load away. A cold room can buy a few days, but the group running it works with
+notebooks and phone calls. It is hard to know who booked what, which batch spoils first, what a crate costs in
+electricity, or whether waiting will pay. So rooms sit half full and farmers do not trust them.
+
+
+
+
+Figure 2. How a glut turns into loss, and where we help.
+Who benefits
+Small farmers sell later and lose less. The operator plans bookings and sees cost per crate. Self-help group members
+and small aggregators get shared access through the group's agent. Advisers get local data. We will help farmers
+without smartphones through the agent, with Tamil voice messages and a fee they can afford.
+
+
+
+
+Figure 3. Who benefits.
+
+
+Proposed solution
+We will build a small Tamil app for one farmer group's cold room, using ready-made sensors, so we design no
+hardware.
+Booking and stock: farmers book crates on a web page or chat-style screen; the agent books for members without
+phones.
+Shelf-life estimate: temperature and humidity loggers feed each batch's record. The app shows remaining good days
+as a range, from crop shelf-life tables and each reading. We use a simple probability model because one season of
+data cannot support a heavy one, and a farmer should see why the app says what it says.
+Price history: public daily market prices show what happened after earlier glut weeks. The app never promises
+recovery.
+Energy view: a clip-on meter shows electricity per crate and suggests cooling at cheaper or solar hours.
+AI here means forecasting, risk estimation and a Tamil chat helper. Farmers consent in Tamil; we collect only what
+we need, and the group keeps the data. In month one we will agree in writing with one farmer group or cold-room
+owner in Krishnagiri district before any building starts.
+Figure 4. System design.
+
+
+
+
+Figure 5. App mock-ups.
+
+
+Expected outcome and evaluation
+We will compare results with what the group records in month one. After one harvest season we will compare
+spoilage, income per quintal, room use, electricity per quintal and repeat users. One season at one site cannot prove
+cause and effect; where possible we will compare with nearby non-users, and we will say what the data does not
+show. We will release the code and a short Tamil guide.
+Figure 6. Evaluation design.
+
+
+
+
+Figure 7. Measures.
+
+
+How this fits the IdeaRun theme
+Electricity: cooling produce, and counting kilowatt-hours per crate. Enterprise: the group sells storage by the crate
+and farmers earn more per quintal. Education: we will train farmers and the agent to read the app's advice, and
+leave a Tamil guide behind. After the pilot, a small fee per crate can pay for messaging and hosting, so the group can
+keep running the tool. The same design can serve milk, flowers or fish.
+
+Plan and budget
+
+
+
+
+Figure 8. Twelve-month plan.
+
+Item                                                       Rs
+Loggers, 6 at Rs 4,500 (upper listed price)                27,000
+Clip-on energy meters, 2 (planning allowance)              16,000
+Messaging and hosting, 12 months                           12,000
+Field travel, 30 trips                                    15,000
+Local agent honorarium, 9 months                          18,000
+Training sessions, 4                                      12,000
+Printing, Tamil guide                                     8,000
+Contingency, 10%                                          10,800
+Total                                                     118,800
+
+
+Logger prices come from marketplace listings; other lines are planning allowances and quotes will follow.
+
+Risks
+
+
+
+
+Figure 9. Main risks (team estimate).
+
+
+
+
+Figure 10. Evidence status.
+
+Sources: News Minute (2019 tomato dumping); Lok Sabha replies on CIPHET losses and cold storage capacity; SELCO
+Foundation; Mongabay India (Nov 2025); IndiaMART and Testo listings.
+
