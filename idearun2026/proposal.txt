@@ -1,0 +1,39 @@
+Title: AgriChill Advisor: helping Krishnagiri's farmer groups keep tomatoes a few days longer, and sell them at a fairer price
+
+Team Details
+Team name: [team name]. Institution: [college, district], Tamil Nadu.
+[Member 1, department, year, role] | [Member 2, department, year, role] | [Member 3, department, year, role]
+
+Mentor Details
+[Faculty mentor name, designation, department, email, phone]
+
+Background Survey
+In 2019, farmers in Rayakottai (Krishnagiri district) and Valappadi (Salem district) tipped tomatoes into lakes after the price fell from about Rs 20 to Rs 2 a kilo. A farmers' union leader said too many people had planted tomato, a short-season crop. Another report said rural cold storage was not enough, and that tomatoes do not last long. The loss is not only local. A government study estimated yearly harvest and post-harvest losses of major produce at Rs 92,651 crore, and the ministry's own breakdown puts fruit at Rs 16,644 crore and vegetables at Rs 14,842 crore.
+
+There are some answers. Farmer producer organisations in Andhra Pradesh and Maharashtra have started pay-as-you-use cold storage. A SELCO Foundation study says the high up-front cost of solar cold rooms has held adoption back. What we have not found is a simple tool made for the small group that actually runs one of these rooms. That is our guess, not a fact, and we will test it with farmers in the first month before we build anything.
+
+Problem Statement
+A harvest arrives all at once, and tomatoes will not wait. A farmer standing in a crowded market with three tonnes on a truck has two choices: take whatever the trader offers, or throw the load away. A cold room can buy him a few days. But the farmer group that runs it usually works with notebooks and phone calls. It is hard for them to know who has booked what, which batch will spoil first, what a crate really costs in electricity, or whether waiting will even pay. So the room sits half full, and farmers do not trust it enough to use it.
+
+Proposed Solution
+We will build a small Tamil-language app for one farmer group's cold room.
+
+Booking and stock: farmers book crates on a web page or a chat-style screen. The group's agent can book for members without smartphones.
+
+Shelf-life estimate: we will use ready-made temperature and humidity loggers, so there is no custom electronics. For every batch the app shows the remaining good days as a range, worked out from crop shelf-life tables and updated with each reading. We will use a simple probability model on purpose. One season of data cannot support anything heavier, and a farmer should be able to see why the app says what it says.
+
+Price history: using public daily market prices (the data.gov.in mandi dataset, which needs an API request, and the Ashoka University CEDA archive) the app will show what prices did after earlier glut weeks. It will not promise recovery. Sometimes prices do not recover, and the app will say so.
+
+Energy view: a clip-on energy meter will show electricity per crate, and suggest cooling at cheaper or solar hours if the room has solar.
+
+The AI here is forecasting and risk estimation, plus a Tamil chat helper for questions. Farmers will give consent in Tamil, and we will collect only what we need. Our partner is [farmer group or cold-room owner, village, district], and their letter of support is attached.
+
+Expected Outcome
+We will judge ourselves against what the group records before we start. In month one we will note last season's spoilage, selling prices and how full the room was. After one harvest season we will compare: share of produce spoiled, income per quintal, room use, electricity per quintal, and how many farmers came back a second time. We will also ask farmers what confused them.
+
+One season at one site cannot prove cause and effect, and we will say so in our report. Where we can, we will compare with nearby farmers who did not use the app. At the end we will release the code and a short Tamil guide so other groups can copy what worked.
+
+Plan: month 1 interviews and baseline; months 2-3 build and test with the operator; months 4-6 pilot through one harvest season; months 7-9 improve and add a second site if possible; months 10-12 results report.
+
+Estimated Budget
+Temperature and humidity loggers [number x Rs]; clip-on energy meter [Rs]; messaging and hosting [Rs]; field travel [Rs]; farmer training sessions [Rs]; printing [Rs]. Total Rs [amount]. Quotes will be attached.
