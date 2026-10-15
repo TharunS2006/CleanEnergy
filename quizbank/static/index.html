@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Online Quiz and Question Bank</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>Online Quiz and Question Bank</h1>
+  <div id="who"></div>
+</header>
+
+<main>
+  <!-- login / register -->
+  <section id="login-box">
+    <h2>Login</h2>
+    <form id="login-form">
+      <label>Email <input id="l-email" type="email" required></label>
+      <label>Password <input id="l-pass" type="password" required></label>
+      <button>Login</button>
+    </form>
+    <h2>New here? Register</h2>
+    <form id="reg-form">
+      <label>Name <input id="r-name" required></label>
+      <label>Email <input id="r-email" type="email" required></label>
+      <label>Password <input id="r-pass" type="password" minlength="6" required></label>
+      <label>I am a
+        <select id="r-role"><option>student</option><option>teacher</option></select>
+      </label>
+      <button>Register</button>
+    </form>
+    <p id="login-msg" class="msg"></p>
+  </section>
+
+  <!-- after login -->
+  <section id="app" hidden>
+    <nav id="tabs"></nav>
+    <p id="msg" class="msg"></p>
+
+    <div id="tab-questions" class="tab" hidden>
+      <h2>Question bank</h2>
+      <form id="filter-form" class="row">
+        <input id="f-subject" placeholder="Subject">
+        <input id="f-topic" placeholder="Topic">
+        <select id="f-diff"><option value="">Any difficulty</option><option>easy</option><option>medium</option><option>hard</option></select>
+        <input id="f-search" placeholder="Search text">
+        <button>Filter</button>
+      </form>
+      <table id="q-table"></table>
+      <div class="row">
+        <button id="prev">Previous</button> <span id="page-info"></span> <button id="next">Next</button>
+      </div>
+      <h3 id="q-form-title">Add a question</h3>
+      <form id="q-form">
+        <input id="q-id" type="hidden">
+        <div class="row">
+          <input id="q-subject" placeholder="Subject" required>
+          <input id="q-topic" placeholder="Topic" required>
+          <select id="q-diff"><option>easy</option><option>medium</option><option>hard</option></select>
+        </div>
+        <textarea id="q-text" placeholder="Question text" required></textarea>
+        <input id="q-a" placeholder="Option A" required><input id="q-b" placeholder="Option B" required>
+        <input id="q-c" placeholder="Option C" required><input id="q-d" placeholder="Option D" required>
+        <label>Correct answer
+          <select id="q-ans"><option>a</option><option>b</option><option>c</option><option>d</option></select>
+        </label>
+        <button>Save question</button> <button type="button" id="q-cancel">Clear</button>
+      </form>
+    </div>
+
+    <div id="tab-quizzes" class="tab" hidden>
+      <h2>Quizzes</h2>
+      <table id="quiz-table"></table>
+      <div id="make-quiz" hidden>
+        <h3>Make a random quiz</h3>
+        <form id="rq-form" class="row">
+          <input id="rq-title" placeholder="Quiz title" required>
+          <input id="rq-subject" placeholder="Subject" required>
+          <input id="rq-topic" placeholder="Topic (optional)">
+          <select id="rq-diff"><option value="">Any difficulty</option><option>easy</option><option>medium</option><option>hard</option></select>
+          <input id="rq-count" type="number" min="1" value="5" title="Number of questions">
+          <input id="rq-min" type="number" min="1" value="10" title="Minutes">
+          <button>Create</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="tab-take" class="tab" hidden>
+      <h2 id="take-title"></h2>
+      <p id="timer"></p>
+      <form id="take-form"></form>
+      <div id="take-result"></div>
+    </div>
+
+    <div id="tab-results" class="tab" hidden>
+      <h2 id="res-title">Results</h2>
+      <div id="res-body"></div>
+    </div>
+
+    <div id="tab-admin" class="tab" hidden>
+      <h2>Overview</h2>
+      <div id="stats"></div>
+      <h3>Users</h3>
+      <table id="user-table"></table>
+    </div>
+  </section>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>
