@@ -418,5 +418,4 @@ REFS = [
     "Microsoft, “Azure Resource Manager REST API reference,” Microsoft Learn. https://learn.microsoft.com/rest/api/azure/",
     "C. Percival and S. Josefsson, “The scrypt password-based key derivation function,” RFC 7914, IETF, 2016.",
     "S. Ramirez, “FastAPI documentation.” https://fastapi.tiangolo.com/",
-    "SQLAlchemy Project, “SQLAlchemy 2.0 documentation.” https://docs.sqlalchemy.org/",
 ]

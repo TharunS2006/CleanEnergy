@@ -86,6 +86,8 @@ class Builder:
         for s in ppr.findall(qn("w:spacing")): ppr.remove(s)
         sp = OxmlElement("w:spacing"); sp.set(qn("w:after"), "200"); ppr.insert(0, sp)
         align(p, "center")
+        if kind == "Table":
+            p.find(qn("w:pPr")).insert(0, OxmlElement("w:keepNext"))
         rpr = OxmlElement("w:rPr")
         for tag in ("w:b", "w:sz"):
             x = OxmlElement(tag)
@@ -106,7 +108,7 @@ class Builder:
         run.add_picture(str(path), **kw)
         return p
 
-    def table(self, header, rows, widths, size=10, borders=True, bold_last=False, center_cols=()):
+    def table(self, header, rows, widths, size=10, borders=True, bold_last=False, center_cols=(), pad=3):
         t = self.d.add_table(rows=1, cols=len(header))
         self.body.remove(t._tbl)
         tblPr = t._tbl.tblPr
@@ -129,8 +131,8 @@ class Builder:
             for i, (c, v) in enumerate(zip(cells, vals)):
                 c.width = Cm(widths[i])
                 p = c.paragraphs[0]
-                p.paragraph_format.space_after = Pt(2); p.paragraph_format.space_before = Pt(2)
-                p.paragraph_format.line_spacing = 1.0
+                p.paragraph_format.space_after = Pt(pad); p.paragraph_format.space_before = Pt(pad)
+                p.paragraph_format.line_spacing = 1.5
                 p.paragraph_format.left_indent = Cm(0.05); p.paragraph_format.right_indent = Cm(0.05)
                 p.paragraph_format.first_line_indent = Cm(0)
                 p.alignment = 1 if (hdr or i in center_cols) else 0
@@ -140,6 +142,9 @@ class Builder:
         th = OxmlElement("w:tblHeader"); th.set(qn("w:val"), "true"); trPr.append(th)
         for k, row in enumerate(rows):
             fill(t.add_row().cells, row, bold=bold_last and k == len(rows) - 1)
+        for row in (t.rows[:-1] if len(rows) <= 14 else []):
+            for c in row.cells:
+                for pp in c.paragraphs: pp.paragraph_format.keep_with_next = True
         for r in t.rows:
             cs = OxmlElement("w:cantSplit"); cs.set(qn("w:val"), "true"); r._tr.get_or_add_trPr().append(cs)
         return t._tbl
@@ -152,54 +157,60 @@ class Builder:
         return p
 
     # ------------------------------------------------------------------ chapters
+    def para_lead(self, lead, text):
+        p = copy.deepcopy(self.T["p"]); set_text(p, lead + " ")
+        r1 = p.find(qn("w:r")); rp = r1.find(qn("w:rPr"))
+        if rp is None:
+            rp = OxmlElement("w:rPr"); r1.insert(0, rp)
+        rp.append(OxmlElement("w:b"))
+        r2 = OxmlElement("w:r"); t = OxmlElement("w:t"); t.set(XML_SPACE, "preserve"); t.text = text; r2.append(t); p.append(r2)
+        return p
+
     def chapters(self):
         out = []
-        blocks = C.chapters()
-        rot = ASSETS / "fig_architecture_rot.png"
-        if not rot.exists():
-            Image.open(ASSETS / "fig_architecture.png").rotate(90, expand=True).save(rot)
-        for b in blocks:
-            k = b[0]
-            if k == "ch":
-                self.chapter = b[1]
-                p1 = self.para("ch", f"CHAPTER {b[1]}"); p2 = self.para("ch", b[2])
-                if b[1] > 1:
+        for raw in (HERE / "content_src.txt").read_text().splitlines():
+            if not raw.strip():
+                continue
+            k, _, rest = raw.partition("|")
+            if k == "CH":
+                num, _, ttl = rest.partition("|")
+                self.chapter = int(num)
+                p1 = self.para("ch", f"CHAPTER {num}"); p2 = self.para("ch", ttl)
+                if int(num) > 1:
                     pbb(p1)
-                out += [p1, p2]; self.heads.append(("ch", str(b[1]), b[2]))
-            elif k == "h1":
-                out.append(self.para("h1", f"{b[1]} {b[2]}")); self.heads.append(("h1", b[1], b[2]))
-            elif k == "h2":
-                out.append(self.para("h2", f"{b[1]} {b[2]}")); self.heads.append(("h2", b[1], b[2]))
-            elif k == "p":
-                out.append(self.para("p", b[1]))
-            elif k == "obj":
-                out.append(self.para("obj", f"{b[1]}: {b[2]}" if b[2] else f"{b[1]}:"))
-            elif k == "bul":
-                out += [self.para("bul", t) for t in b[1]]
-            elif k == "num":
-                out += [self.para("num", f"{i}. {t}") for i, t in enumerate(b[1], 1)]
-            elif k == "tbl":
-                cap, label = self.caption("Table", b[1])
-                cap_el = cap
-                out.append(cap_el)
-                out.append(self.table(b[2], b[3], b[4], size=9.5, bold_last=(b[2][0] in ("Resource",))))
+                out += [p1, p2]; self.heads.append(("ch", num, ttl))
+            elif k == "H1":
+                num, _, ttl = rest.partition("|")
+                out.append(self.para("h1", f"{num} {ttl}")); self.heads.append(("h1", num, ttl))
+            elif k == "P":
+                out.append(self.para("p", rest))
+            elif k == "PL":
+                lead, _, txt = rest.partition("|")
+                out.append(self.para_lead(lead, txt))
+            elif k == "T":
+                parts = rest.split("|")
+                title, widths = parts[0], [float(x) for x in parts[-1].split(",")]
+                header = re.split(r",(?! )", parts[1]); rows = [re.split(r",(?! )", r) for r in parts[2:-1]]
+                cap, _ = self.caption("Table", title)
+                out.append(cap)
+                out.append(self.table(header, rows, widths, size=10.5, bold_last=(header[0] in ("Resource",))))
                 out.append(self.spacer())
-            elif k == "fig":
-                out.append(self.picture(ASSETS / pathlib.Path(b[1]).name, width_cm=b[3]))
-                cap, _ = self.caption("Figure", b[2]); out.append(cap)
-            elif k == "figrot":
-                p = self.picture(rot, height_cm=22.2); pbb(p); out.append(p)
-                cap, _ = self.caption("Figure", b[2]); out.append(cap)
+            elif k == "F":
+                f, cap_t, w = rest.split("|")
+                out.append(self.picture(ASSETS / f, width_cm=float(w)))
+                cap, _ = self.caption("Figure", cap_t); out.append(cap)
         return out
 
     def abbreviations_and_refs(self):
         out = []
         h = copy.deepcopy(self.T["h1abbr"]); set_text(h, "LIST OF ABBREVIATIONS"); pbb(h); out.append(h)
         rows = [[f"{i}.", a, f] for i, (a, f) in enumerate(C.ABBREV, 1)]
-        out.append(self.table(["No.", "Abbreviation", "Full Form"], rows, [1.4, 3.4, 11.0], size=11, borders=False, center_cols=(0,)))
+        out.append(self.table(["No.", "Abbreviation", "Full Form"], rows, [1.4, 3.4, 11.0], size=12, borders=False, center_cols=(0,), pad=3.5))
         h = copy.deepcopy(self.T["refhead"]); set_text(h, "REFERENCES"); pbb(h); out.append(h)
         for r_ in C.REFS:
-            out.append(self.para("ref", r_))
+            pr = self.para("ref", r_)
+            sp = pr.find(qn("w:pPr")).find(qn("w:spacing")); sp.set(qn("w:after"), "20")
+            out.append(pr)
         return out
 
     # ------------------------------------------------------------------- build
@@ -235,6 +246,23 @@ class Builder:
         for el, txt in zip((e[63], e[64], e[65]), C.ABSTRACT):
             set_text(el, txt)
         pbb(e[62])
+        for el in (e[63], e[64], e[65]):
+            ppr = el.find(qn("w:pPr"))
+            for ind in ppr.findall(qn("w:ind")): ppr.remove(ind)
+            ind = OxmlElement("w:ind"); ind.set(qn("w:left"), "0"); ind.set(qn("w:right"), "0"); ppr.append(ind)
+            align(el, "both")
+        # remove the Vision / Mission / PEO / PSO page and put the 7 policy pages in its place
+        for i in list(range(38, 62)) + [30, 31, 32, 34, 35]:
+            self.body.remove(e[i])
+        anchor = e[37]
+        for n in range(1, 8):
+            p = copy.deepcopy(self.T["obj"]); set_text(p, "")
+            ppr = p.find(qn("w:pPr"))
+            for x in ppr.findall(qn("w:spacing")) + ppr.findall(qn("w:ind")): ppr.remove(x)
+            sp = OxmlElement("w:spacing"); sp.set(qn("w:before"), "0"); sp.set(qn("w:after"), "0"); sp.set(qn("w:line"), "240"); sp.set(qn("w:lineRule"), "auto"); ppr.append(sp)
+            pbb(p); align(p, "center")
+            Paragraph(p, self.d._body).runs[0].add_picture(str(HERE / f"policy-{n}.png"), width=Cm(16.2))
+            anchor.addnext(p); anchor = p
         # remove old TOC / lists / chapters --------------------------------
         for i in list(range(69, 124)) + list(range(124, 127)) + list(range(128, 136)) + list(range(137, 158)) + list(range(159, 361)):
             self.body.remove(e[i])
@@ -254,7 +282,7 @@ class Builder:
                 label = title_case(ttl)
                 rows.append([num, ("        " if kind == "h2" else "") + label, pages.get(("h", num), "")])
         rows.append(["", "REFERENCES", pages.get("REFERENCES", "")])
-        toc = self.table(["CHAPTER NO", "TITLE", "PAGE"], rows, [2.6, 11.4, 2.0], size=11, borders=False, center_cols=(0,))
+        toc = self.table(["CHAPTER NO", "TITLE", "PAGE"], rows, [2.6, 11.4, 2.0], size=12, borders=False, center_cols=(0,), pad=3.5)
         # bold chapter rows, right-align page numbers
         for tr in toc.findall(qn("w:tr"))[1:]:
             tcs = tr.findall(qn("w:tc"))
@@ -276,9 +304,64 @@ class Builder:
             sectpara.addprevious(head)
             items = self.caps[kind]
             rws = [[lab.split(" ", 1)[1], ttl, pages.get(lab, "")] for lab, ttl in items]
-            tbl = self.table([f"{kind.upper()} NO", "TITLE", "PAGE NO"], rws, [2.6, 11.4, 2.0], size=11, borders=False, center_cols=(0, 2))
+            tbl = self.table([f"{kind.upper()} NO", "TITLE", "PAGE NO"], rws, [2.6, 11.4, 2.0], size=12, borders=False, center_cols=(0, 2), pad=5.5)
             sectpara.addprevious(tbl)
+        self.finish(e)
         self.d.save(DOCX)
+
+    def finish(self, e):
+        # box border, margins, page numbers on every section; 1.5 line spacing everywhere after the cover
+        skip = set(id(x) for x in e[0:38] if x.getparent() is not None) | set(id(x) for x in e[0:24])
+        for sp in self.body.iter(qn('w:sectPr')):
+            _borders(sp)
+        first = next(self.body.iter(qn('w:sectPr')))
+        pm = first.find(qn('w:pgMar'))
+        for k, v in (('left', 1134), ('right', 1134), ('top', 1021), ('bottom', 900)):
+            pm.set(qn('w:' + k), str(v))
+        for sec in self.d.sections:
+            sec.footer.is_linked_to_previous = False
+            fp = sec.footer.paragraphs[0]
+            for ch in list(fp._p):
+                if ch.tag != qn("w:pPr"): fp._p.remove(ch)
+            fp.alignment = 1
+            _pagefield(fp._p)
+        for p in self.body.iter(qn('w:p')):
+            if id(p) in skip:
+                continue
+            ppr = p.find(qn('w:pPr'))
+            if ppr is None:
+                ppr = OxmlElement('w:pPr'); p.insert(0, ppr)
+            sp = ppr.find(qn('w:spacing'))
+            if sp is None:
+                sp = OxmlElement('w:spacing'); ppr.insert(0, sp)
+            cur = int(sp.get(qn('w:line'), '0') or 0)
+            if sp.get(qn('w:lineRule')) in (None, 'auto') and cur < 360 and p.find('.//' + qn('w:drawing')) is None:
+                sp.set(qn('w:line'), '360'); sp.set(qn('w:lineRule'), 'auto')
+
+
+def _borders(sect):
+    for old in sect.findall(qn('w:pgBorders')):
+        sect.remove(old)
+    b = OxmlElement('w:pgBorders'); b.set(qn('w:offsetFrom'), 'page')
+    for side in ('top', 'left', 'bottom', 'right'):
+        x = OxmlElement('w:' + side); x.set(qn('w:val'), 'single'); x.set(qn('w:sz'), '8'); x.set(qn('w:space'), '24'); x.set(qn('w:color'), '000000'); b.append(x)
+    sect.find(qn('w:pgMar')).addnext(b)
+
+
+def _pagefield(p):
+    def mk(t, **kw):
+        el = OxmlElement(t)
+        for k, v in kw.items(): el.set(qn(k), v)
+        return el
+    for kind in ('begin', 'instr', 'sep', 'txt', 'end'):
+        r = OxmlElement('w:r')
+        if kind == 'instr':
+            it = mk('w:instrText'); it.set(XML_SPACE, 'preserve'); it.text = ' PAGE '; r.append(it)
+        elif kind == 'txt':
+            t = OxmlElement('w:t'); t.text = '1'; r.append(t)
+        else:
+            r.append(mk('w:fldChar', **{'w:fldCharType': {'begin': 'begin', 'sep': 'separate', 'end': 'end'}[kind]}))
+        p.append(r)
 
 
 def to_pdf():
