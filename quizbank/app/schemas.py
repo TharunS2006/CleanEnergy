@@ -2,6 +2,8 @@ from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
+LEVELS = ("easy", "medium", "hard")
+
 
 class RegisterIn(BaseModel):
     name: str = Field(min_length=2, max_length=60)
@@ -32,11 +34,12 @@ class QuestionIn(BaseModel):
     opt_c: str = Field(min_length=1)
     opt_d: str = Field(min_length=1)
     answer: str
+    explanation: str = Field(default="", max_length=800)
 
     @field_validator("difficulty")
     @classmethod
     def diff_ok(cls, v):
-        if v not in ("easy", "medium", "hard"):
+        if v not in LEVELS:
             raise ValueError("difficulty must be easy, medium or hard")
         return v
 
@@ -48,10 +51,15 @@ class QuestionIn(BaseModel):
         return v
 
 
+class ImportIn(BaseModel):
+    csv: str = Field(min_length=10)
+
+
 class QuizIn(BaseModel):
     title: str = Field(min_length=3, max_length=80)
     subject: str
     minutes: int = Field(ge=1, le=180)
+    max_attempts: int = Field(default=2, ge=1, le=10)
     question_ids: List[int] = Field(min_length=1)
 
 
@@ -59,11 +67,22 @@ class RandomQuizIn(BaseModel):
     title: str = Field(min_length=3, max_length=80)
     subject: str
     minutes: int = Field(ge=1, le=180)
+    max_attempts: int = Field(default=2, ge=1, le=10)
     count: int = Field(ge=1, le=50)
     topic: Optional[str] = None
     difficulty: Optional[str] = None
 
 
-class AttemptIn(BaseModel):
-    # {"12": "a", "15": "c"}  question id -> chosen option
-    answers: Dict[str, str]
+class AnswerIn(BaseModel):
+    choice: Optional[str] = Field(default=None, pattern="^[abcd]$")
+    confidence: Optional[int] = Field(default=None, ge=1, le=3)   # 1 guessing, 2 fairly sure, 3 certain
+
+
+class SubmitIn(BaseModel):
+    answers: Dict[str, AnswerIn]
+
+
+class PracticeAnswerIn(BaseModel):
+    question_id: int
+    choice: str = Field(pattern="^[abcd]$")
+    confidence: Optional[int] = Field(default=None, ge=1, le=3)

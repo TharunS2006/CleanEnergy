@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Online Quiz and Question Bank</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <h1>Online Quiz and Question Bank</h1>
+  <div id="who"></div>
+</header>
+
+<main>
+  <section id="login-box">
+    <h2>Login</h2>
+    <form id="login-form">
+      <label>Email <input id="l-email" type="email" required></label>
+      <label>Password <input id="l-pass" type="password" required></label>
+      <button>Login</button>
+    </form>
+    <h2>New here? Register</h2>
+    <form id="reg-form">
+      <label>Name <input id="r-name" required></label>
+      <label>Email <input id="r-email" type="email" required></label>
+      <label>Password <input id="r-pass" type="password" minlength="6" required></label>
+      <label>I am a <select id="r-role"><option>student</option><option>teacher</option></select></label>
+      <button>Register</button>
+    </form>
+    <p id="login-msg" class="msg"></p>
+  </section>
+
+  <section id="app" hidden>
+    <nav id="tabs"></nav>
+    <p id="msg" class="msg"></p>
+    <div id="view"></div>
+  </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

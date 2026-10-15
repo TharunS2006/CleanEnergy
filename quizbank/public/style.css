@@ -1,15 +1,16 @@
 body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; color: #222; }
 header { background: #2d3e50; color: #fff; padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; }
 header h1 { font-size: 20px; margin: 0; }
-main { max-width: 960px; margin: 20px auto; background: #fff; padding: 20px 28px; border: 1px solid #ccc; }
+main { max-width: 980px; margin: 20px auto; background: #fff; padding: 20px 28px; border: 1px solid #ccc; }
 h2 { font-size: 18px; margin-top: 0; }
-h3 { font-size: 15px; }
+h3 { font-size: 15px; margin-bottom: 4px; }
 label { display: block; margin: 8px 0; }
 input, select, textarea { padding: 6px; border: 1px solid #999; font-size: 14px; margin: 3px 4px 3px 0; }
 textarea { width: 98%; height: 60px; }
 button { padding: 6px 14px; background: #2d3e50; color: #fff; border: 0; cursor: pointer; font-size: 14px; }
 button.small { padding: 3px 8px; font-size: 12px; background: #555; }
 button.red { background: #a33; }
+button:disabled { background: #aaa; }
 .row { margin: 8px 0; }
 table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 14px; }
 th, td { border: 1px solid #bbb; padding: 6px 8px; text-align: left; vertical-align: top; }
@@ -21,3 +22,11 @@ nav button.on { background: #2d3e50; }
 .question { border: 1px solid #ccc; padding: 8px 12px; margin: 8px 0; }
 .question.right { background: #e7f4e7; }
 .question.wrong { background: #f8e5e5; }
+.conf { font-size: 13px; color: #555; margin-top: 6px; }
+.note { font-size: 13px; color: #555; }
+.warn { color: #a33; font-weight: bold; }
+.bar { background: #e3e3e3; height: 14px; width: 200px; display: inline-block; vertical-align: middle; }
+.bar span { display: block; height: 14px; background: #3a7; }
+.bar.weak span { background: #c44; }
+.bar.learning span { background: #d90; }
+.timer { font-size: 18px; font-weight: bold; }
