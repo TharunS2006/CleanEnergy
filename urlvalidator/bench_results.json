@@ -1,0 +1,455 @@
+{
+ "sizes": {
+  "scheme": {
+   "nfa": 28,
+   "dfa": 11,
+   "min": 7,
+   "classes": 7,
+   "ms": 0.3
+  },
+  "ipv4": {
+   "nfa": 144,
+   "dfa": 45,
+   "min": 25,
+   "classes": 9,
+   "ms": 1.5
+  },
+  "label": {
+   "nfa": 134,
+   "dfa": 126,
+   "min": 126,
+   "classes": 4,
+   "ms": 5.8
+  },
+  "domain": {
+   "nfa": 268,
+   "dfa": 190,
+   "min": 190,
+   "classes": 6,
+   "ms": 13.0
+  },
+  "host": {
+   "nfa": 434,
+   "dfa": 246,
+   "min": 234,
+   "classes": 18,
+   "ms": 30.0
+  },
+  "port": {
+   "nfa": 80,
+   "dfa": 26,
+   "min": 12,
+   "classes": 10,
+   "ms": 0.8
+  },
+  "path": {
+   "nfa": 20,
+   "dfa": 7,
+   "min": 5,
+   "classes": 6,
+   "ms": 0.2
+  },
+  "query": {
+   "nfa": 24,
+   "dfa": 8,
+   "min": 5,
+   "classes": 7,
+   "ms": 0.3
+  },
+  "fragment": {
+   "nfa": 24,
+   "dfa": 8,
+   "min": 5,
+   "classes": 7,
+   "ms": 0.2
+  },
+  "full URL": {
+   "nfa": 618,
+   "dfa": 299,
+   "min": 258,
+   "classes": 29,
+   "ms": 57.5
+  }
+ },
+ "transitions_live": 5270,
+ "accuracy": {
+  "dfa": 36,
+  "re": 36,
+  "urlparse": 15
+ },
+ "n_cases": 36,
+ "urlparse_false_accepts": [
+  "htp://example.com",
+  "mailto://example.com",
+  "http://exa mple.com",
+  "http://-example.com",
+  "http://example-.com",
+  "http://exa_mple.com",
+  "http://example",
+  "http://example.c",
+  "http://example.123",
+  "http://256.1.1.1",
+  "http://1.2.3",
+  "http://example.com:0",
+  "http://example.com:65536",
+  "http://example.com:",
+  "http://example.com:80a/",
+  "http://example.com/a b",
+  "http://example.com/%zz",
+  "http://example.com/a<b>",
+  "http://example.com/?q=a b",
+  "http://m\u00fcnchen.de",
+  "http://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com"
+ ],
+ "cases": [
+  [
+   "https://example.com",
+   true,
+   true,
+   true,
+   true,
+   "plain https URL"
+  ],
+  [
+   "http://www.rmkcet.ac.in/index.html",
+   true,
+   true,
+   true,
+   true,
+   "sub-domain, path"
+  ],
+  [
+   "http://localhost:8080/api/v1/users?id=42#top",
+   true,
+   true,
+   true,
+   true,
+   "localhost, port, path, query, fragment"
+  ],
+  [
+   "ftp://files.example.org/pub/readme.txt",
+   true,
+   true,
+   true,
+   true,
+   "ftp scheme"
+  ],
+  [
+   "HTTPS://EXAMPLE.COM/Path",
+   true,
+   true,
+   true,
+   true,
+   "scheme and host are case-insensitive"
+  ],
+  [
+   "http://192.168.0.1/admin",
+   true,
+   true,
+   true,
+   true,
+   "IPv4 host"
+  ],
+  [
+   "http://255.255.255.255:65535/",
+   true,
+   true,
+   true,
+   true,
+   "largest IPv4 and port"
+  ],
+  [
+   "https://a-b.example.co.uk/%E0%A4%A4?q=a%20b",
+   true,
+   true,
+   true,
+   true,
+   "hyphen in label, percent escapes, 3-level domain"
+  ],
+  [
+   "http://example.com/a/b/c/",
+   true,
+   true,
+   true,
+   true,
+   "trailing slash"
+  ],
+  [
+   "http://example.com?search=url#frag/ment?x",
+   true,
+   true,
+   true,
+   true,
+   "query and fragment without a path"
+  ],
+  [
+   "http://1.2.3.4.example.com",
+   true,
+   true,
+   true,
+   true,
+   "digit-only labels before a letter TLD"
+  ],
+  [
+   "http://example.com:1",
+   true,
+   true,
+   true,
+   true,
+   "smallest port"
+  ],
+  [
+   "example.com",
+   false,
+   false,
+   false,
+   false,
+   "no scheme"
+  ],
+  [
+   "http:/example.com",
+   false,
+   false,
+   false,
+   false,
+   "only one slash after the colon"
+  ],
+  [
+   "htp://example.com",
+   false,
+   false,
+   false,
+   true,
+   "misspelled scheme"
+  ],
+  [
+   "mailto://example.com",
+   false,
+   false,
+   false,
+   true,
+   "scheme not supported"
+  ],
+  [
+   "http://",
+   false,
+   false,
+   false,
+   false,
+   "host missing"
+  ],
+  [
+   "http://exa mple.com",
+   false,
+   false,
+   false,
+   true,
+   "space inside the host"
+  ],
+  [
+   "http://-example.com",
+   false,
+   false,
+   false,
+   true,
+   "label starts with a hyphen"
+  ],
+  [
+   "http://example-.com",
+   false,
+   false,
+   false,
+   true,
+   "label ends with a hyphen"
+  ],
+  [
+   "http://exa_mple.com",
+   false,
+   false,
+   false,
+   true,
+   "underscore in a host name"
+  ],
+  [
+   "http://example",
+   false,
+   false,
+   false,
+   true,
+   "single label that is not localhost"
+  ],
+  [
+   "http://example.c",
+   false,
+   false,
+   false,
+   true,
+   "top-level label shorter than two letters"
+  ],
+  [
+   "http://example.123",
+   false,
+   false,
+   false,
+   true,
+   "top-level label is not alphabetic"
+  ],
+  [
+   "http://256.1.1.1",
+   false,
+   false,
+   false,
+   true,
+   "IPv4 part above 255"
+  ],
+  [
+   "http://1.2.3",
+   false,
+   false,
+   false,
+   true,
+   "IPv4 address with three parts"
+  ],
+  [
+   "http://example.com:0",
+   false,
+   false,
+   false,
+   true,
+   "port zero"
+  ],
+  [
+   "http://example.com:65536",
+   false,
+   false,
+   false,
+   true,
+   "port above 65535"
+  ],
+  [
+   "http://example.com:",
+   false,
+   false,
+   false,
+   true,
+   "colon without a port"
+  ],
+  [
+   "http://example.com:80a/",
+   false,
+   false,
+   false,
+   true,
+   "letter inside the port"
+  ],
+  [
+   "http://example.com/a b",
+   false,
+   false,
+   false,
+   true,
+   "space in the path"
+  ],
+  [
+   "http://example.com/%zz",
+   false,
+   false,
+   false,
+   true,
+   "bad percent escape"
+  ],
+  [
+   "http://example.com/a<b>",
+   false,
+   false,
+   false,
+   true,
+   "angle brackets in the path"
+  ],
+  [
+   "http://example.com/?q=a b",
+   false,
+   false,
+   false,
+   true,
+   "space in the query"
+  ],
+  [
+   "http://m\u00fcnchen.de",
+   false,
+   false,
+   false,
+   true,
+   "non-ASCII host (needs punycode)"
+  ],
+  [
+   "http://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
+   false,
+   false,
+   false,
+   true,
+   "label of 64 characters"
+  ]
+ ],
+ "throughput": {
+  "dfa_accepts": 757468,
+  "validate_full": 74620,
+  "re_fullmatch": 819981,
+  "urlparse": 1026241
+ },
+ "scaling": [
+  [
+   29,
+   1.7
+  ],
+  [
+   119,
+   6.0
+  ],
+  [
+   1019,
+   48.3
+  ],
+  [
+   10019,
+   490.7
+  ],
+  [
+   100019,
+   4757.1
+  ]
+ ],
+ "build_ms": 59.1,
+ "label_growth": [
+  [
+   2,
+   374,
+   140,
+   88
+  ],
+  [
+   8,
+   398,
+   134,
+   93
+  ],
+  [
+   16,
+   430,
+   158,
+   117
+  ],
+  [
+   32,
+   494,
+   206,
+   165
+  ],
+  [
+   63,
+   618,
+   299,
+   258
+  ]
+ ]
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automata-Based URL Validator</title>
+<style>
+  :root { --ink:#1d2330; --mute:#5d6678; --line:#d9dde6; --bg:#f4f5f8; --ok:#1e7a46; --okbg:#e6f4ec; --bad:#b3261e; --badbg:#fbe9e7; --warn:#8a5a00; --warnbg:#fff3d6; --accent:#27437a; }
+  * { box-sizing: border-box; }
+  body { margin:0; font: 15px/1.5 "Segoe UI", system-ui, sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:var(--accent); color:#fff; padding:14px 28px; }
+  header h1 { margin:0; font-size:20px; font-weight:600; }
+  header p { margin:2px 0 0; font-size:13px; opacity:.85; }
+  main { max-width:980px; margin:22px auto; padding:0 18px 40px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:6px; padding:18px 20px; margin-bottom:16px; }
+  h2 { font-size:16px; margin:0 0 10px; }
+  .row { display:flex; gap:8px; }
+  input[type=text] { flex:1; font: 16px "Consolas", "Courier New", monospace; padding:9px 11px; border:1px solid #aab1c0; border-radius:4px; }
+  button { font:inherit; padding:9px 18px; border:0; border-radius:4px; background:var(--accent); color:#fff; cursor:pointer; }
+  button.plain { background:#fff; color:var(--accent); border:1px solid var(--accent); padding:4px 10px; font-size:13px; }
+  .chips { margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-size:13px; color:var(--mute); }
+  .verdict { display:inline-block; padding:3px 12px; border-radius:12px; font-weight:600; font-size:14px; }
+  .verdict.valid { background:var(--okbg); color:var(--ok); } .verdict.invalid { background:var(--badbg); color:var(--bad); }
+  .urlline { font:17px "Consolas","Courier New",monospace; margin:12px 0 6px; word-break:break-all; }
+  .urlline .good { color:var(--ok); } .urlline .err { background:var(--bad); color:#fff; padding:0 2px; border-radius:2px; } .urlline .rest { color:#9aa1b0; }
+  .msg { margin:4px 0; } .expect { color:var(--mute); font-size:13.5px; }
+  .expect code, td code { font-family:"Consolas","Courier New",monospace; background:#eef0f5; padding:0 4px; border-radius:3px; }
+  table { border-collapse:collapse; width:100%; font-size:14px; }
+  th, td { text-align:left; padding:5px 9px; border-bottom:1px solid var(--line); }
+  th { background:#f0f2f7; font-weight:600; }
+  td.mono { font-family:"Consolas","Courier New",monospace; }
+  .phase { font-size:12px; padding:1px 8px; border-radius:9px; background:#e8ecf6; color:var(--accent); }
+  .tabs { display:flex; gap:4px; margin-bottom:14px; } .tabs button { background:#e5e8f0; color:var(--ink); } .tabs button.on { background:var(--accent); color:#fff; }
+  textarea { width:100%; height:150px; font:14px "Consolas","Courier New",monospace; padding:9px; border:1px solid #aab1c0; border-radius:4px; }
+  .info { font-size:13px; color:var(--mute); }
+  .cols { display:grid; grid-template-columns: 1fr 1fr; gap:16px; } @media (max-width:760px){ .cols{ grid-template-columns:1fr; } }
+  .tracewrap { max-height:300px; overflow:auto; }
+  td.ok { color:var(--ok); font-weight:600; } td.no { color:var(--bad); font-weight:600; }
+</style>
+</head>
+<body>
+<header><h1>Automata-Based URL Validator</h1><p>Every URL is run through a minimal deterministic finite automaton built from the URL grammar</p></header>
+<main>
+  <div class="tabs"><button id="t1" class="on" onclick="tab(1)">Single URL</button><button id="t2" onclick="tab(2)">Batch check</button></div>
+
+  <section id="single">
+    <div class="card">
+      <h2>Enter a URL</h2>
+      <form class="row" onsubmit="check(); return false;"><input type="text" id="url" value="https://www.rmkcet.ac.in:8443/projects/index.html?year=2026#team" autocomplete="off" spellcheck="false"><button>Validate</button></form>
+      <div class="chips">Try:
+        <button class="plain" onclick="use('http://192.168.1.1/admin')">IPv4</button>
+        <button class="plain" onclick="use('http://256.10.0.1/')">bad IPv4</button>
+        <button class="plain" onclick="use('http://example.com:70000/')">bad port</button>
+        <button class="plain" onclick="use('http://exa mple.com')">space</button>
+        <button class="plain" onclick="use('http://-example.com')">hyphen</button>
+        <button class="plain" onclick="use('example.com')">no scheme</button>
+      </div>
+    </div>
+    <div id="out"></div>
+  </section>
+
+  <section id="batch" hidden>
+    <div class="card">
+      <h2>One URL per line</h2>
+      <textarea id="many"></textarea>
+      <p><button onclick="runBatch()">Check all</button> <span id="bsum" class="info"></span></p>
+      <table id="btable"></table>
+    </div>
+  </section>
+  <p class="info" id="info"></p>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function use(u) { $("url").value = u; check(); }
+function tab(n) { $("single").hidden = n !== 1; $("batch").hidden = n !== 2; $("t1").className = n === 1 ? "on" : ""; $("t2").className = n === 2 ? "on" : ""; }
+
+async function check() {
+  const url = $("url").value;
+  const r = await (await fetch("/api/validate?url=" + encodeURIComponent(url))).json();
+  let h = `<div class="card"><h2>Result <span class="verdict ${r.valid ? "valid" : "invalid"}">${r.valid ? "VALID" : "INVALID"}</span></h2>`;
+  if (r.valid) {
+    h += `<div class="urlline"><span class="good">${esc(r.url)}</span></div><p class="msg">The automaton ended in an accepting state after ${r.url.length} characters.</p>`;
+    const p = r.parts;
+    h += `<table><tr><th>Part</th><th>Value</th></tr>` + ["scheme", "host", "host_type", "port", "path", "query", "fragment"]
+      .map((k) => `<tr><td>${k.replace("_", " ")}</td><td class="mono">${p[k] === null || p[k] === "" ? "<span class='info'>none</span>" : esc(p[k])}</td></tr>`).join("") + `</table>`;
+  } else {
+    const at = r.position;
+    h += `<div class="urlline"><span class="good">${esc(r.url.slice(0, at))}</span>${r.char ? `<span class="err">${esc(r.char)}</span><span class="rest">${esc(r.url.slice(at + 1))}</span>` : `<span class="err">&nbsp;</span>`}</div>`;
+    h += `<p class="msg">${esc(r.message)}</p>`;
+    if (r.expected.length) h += `<p class="expect">Characters that would have kept it valid: ${r.expected.map((c) => `<code>${esc(c)}</code>`).join(" ")}</p>`;
+  }
+  h += `</div>`;
+  if (r.trace.length) {
+    h += `<div class="card"><h2>Automaton trace</h2><div class="tracewrap"><table><tr><th>#</th><th>Char</th><th>State</th><th>Part of URL</th></tr>` +
+      r.trace.map((t) => `<tr><td>${t.i}</td><td class="mono">${esc(t.char)}</td><td>q${t.state}</td><td><span class="phase">${t.phase}</span></td></tr>`).join("") + `</table></div></div>`;
+  }
+  $("out").innerHTML = h;
+}
+
+async function runBatch() {
+  const urls = $("many").value.split("\n").map((s) => s.trim()).filter(Boolean);
+  const res = await (await fetch("/api/batch", { method: "POST", body: JSON.stringify({ urls }) })).json();
+  const good = res.filter((r) => r.valid).length;
+  $("bsum").textContent = `${good} valid, ${res.length - good} invalid`;
+  $("btable").innerHTML = `<tr><th>URL</th><th>Verdict</th><th>Reason</th></tr>` + res.map((r) =>
+    `<tr><td class="mono">${esc(r.url)}</td><td class="${r.valid ? "ok" : "no"}">${r.valid ? "valid" : "invalid"}</td><td>${r.valid ? "" : esc(r.message.split(":")[0])}</td></tr>`).join("");
+}
+
+$("many").value = ["https://example.com", "http://localhost:3000/login", "ftp://files.example.org/pub", "http://192.168.0.256/", "http://example.com:0/", "https://exa_mple.com", "htp://example.com", "http://example.com/a b"].join("\n");
+fetch("/api/info").then((r) => r.json()).then((i) => { $("info").textContent = `Automaton built from the grammar: ${i.nfa} NFA states, ${i.dfa} DFA states, ${i.minimal} states after minimisation, ${i.classes} character classes.`; });
+check();
+</script>
+</body>
+</html>
