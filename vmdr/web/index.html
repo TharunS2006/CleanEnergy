@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VM Availability and Disaster Recovery</title>
+<style>
+  :root { --ink:#1e2430; --mute:#5d6878; --line:#d8dde6; --bg:#f2f4f8; --accent:#2a4b8d; --good:#1d7a45; --goodbg:#e4f3ea; --bad:#b3261e; --badbg:#fbe9e7; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.5 "Segoe UI", system-ui, sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:var(--accent); color:#fff; padding:14px 28px; } header h1 { margin:0; font-size:20px; font-weight:600; } header p { margin:2px 0 0; font-size:13px; opacity:.85; }
+  main { max-width:1000px; margin:20px auto; padding:0 18px 40px; }
+  .tabs { display:flex; gap:4px; margin-bottom:14px; flex-wrap:wrap; } .tabs button { background:#e2e6ee; color:var(--ink); } .tabs button.on { background:var(--accent); color:#fff; }
+  button { font:inherit; padding:8px 16px; border:0; border-radius:4px; background:var(--accent); color:#fff; cursor:pointer; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:6px; padding:16px 18px; margin-bottom:14px; } h2 { font-size:16px; margin:0 0 8px; }
+  label { display:block; font-size:13px; color:var(--mute); margin:8px 0 3px; } input, select { font:14px "Consolas","Courier New",monospace; padding:7px 9px; border:1px solid #aab3c0; border-radius:4px; width:100%; }
+  .row { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; } .row > div { flex:1; min-width:140px; }
+  table { border-collapse:collapse; width:100%; font-size:14px; } th, td { text-align:left; padding:5px 9px; border-bottom:1px solid var(--line); } th { background:#edf0f6; }
+  td.n { text-align:right; font-variant-numeric:tabular-nums; } tr.best td { background:var(--goodbg); font-weight:600; } tr.no td { color:#8a93a0; }
+  .big { display:flex; gap:24px; flex-wrap:wrap; margin:6px 0 10px; } .big div { min-width:160px; } .big b { display:block; font-size:26px; } .big span { font-size:13px; color:var(--mute); }
+  .rec { background:var(--goodbg); border:1px solid #b7dcc5; color:#155d33; padding:8px 12px; border-radius:4px; margin:10px 0; } .warn { background:var(--badbg); border:1px solid #efc4be; color:var(--bad); padding:8px 12px; border-radius:4px; margin:10px 0; }
+  .bar { height:16px; background:#6f8ccb; border-radius:2px; min-width:2px; } .note { font-size:13px; color:var(--mute); } [hidden]{display:none !important;}
+</style>
+</head>
+<body>
+<header><h1>VM Availability and Disaster Recovery</h1><p>Calculate availability, simulate failures, and plan the cheapest design that meets your recovery targets</p></header>
+<main>
+  <div class="tabs"><button id="b-av" class="on" onclick="tab('av')">Availability</button><button id="b-cmp" onclick="tab('cmp')">Compare strategies</button><button id="b-plan" onclick="tab('plan')">DR planner</button><button id="b-bk" onclick="tab('bk')">Backups</button></div>
+
+  <section id="av">
+    <div class="card"><h2>One VM host</h2><div class="row"><div><label>Mean time between failures (hours)</label><input id="mtbf" type="number" value="2000"></div><div><label>Mean time to repair (hours)</label><input id="mttr" type="number" value="4"></div><div><button onclick="runAv()">Calculate</button></div></div></div>
+    <div id="avOut"></div>
+  </section>
+  <section id="cmp" hidden>
+    <div class="card"><h2>Same failures, six designs</h2>
+      <div class="row"><div><label>Host MTBF (h)</label><input id="c-hm" type="number" value="2000"></div><div><label>Host MTTR (h)</label><input id="c-hr" type="number" value="4"></div>
+        <div><label>Zone outage every (h)</label><input id="c-zm" type="number" value="17520"></div><div><label>Zone repair (h)</label><input id="c-zr" type="number" value="3"></div></div>
+      <div class="row"><div><label>Region disaster every (h)</label><input id="c-rm" type="number" value="175200"></div><div><label>Region repair (h)</label><input id="c-rr" type="number" value="48"></div>
+        <div><label>Simulated years</label><input id="c-y" type="number" value="2000"></div><div><label>DR tier</label><select id="c-t"><option value="backup-restore">Backup and restore</option><option value="pilot-light">Pilot light</option><option value="warm-standby" selected>Warm standby</option><option value="multi-active">Multi-region active-active</option></select></div>
+        <div><button onclick="runCmp()">Simulate</button></div></div></div>
+    <div id="cmpOut"></div>
+  </section>
+  <section id="plan" hidden>
+    <div class="card"><h2>Recovery targets</h2><div class="row"><div><label>Availability target (%)</label><input id="p-a" type="number" value="99.99" step="0.001"></div><div><label>Recovery time limit, RTO (min)</label><input id="p-rto" type="number" value="60"></div>
+      <div><label>Data-loss limit, RPO (min)</label><input id="p-rpo" type="number" value="15"></div><div><button onclick="runPlan()">Find the cheapest design</button></div></div>
+      <p class="note">Cost is in VM equivalents: one VM = 1.0. RTO and RPO apply to the loss of a whole region.</p></div>
+    <div id="planOut"></div>
+  </section>
+  <section id="bk" hidden>
+    <div class="card"><h2>Backup schedule</h2><div class="row"><div><label>Backup every (minutes)</label><input id="b-i" type="number" value="1440"></div><div><label>Chance a backup succeeds</label><input id="b-p" type="number" value="0.98" step="0.01"></div>
+      <div><label>Data size (GB)</label><input id="b-s" type="number" value="500"></div><div><label>Restore speed (MB/s)</label><input id="b-t" type="number" value="100"></div><div><button onclick="runBk()">Calculate</button></div></div></div>
+    <div id="bkOut"></div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const TABS = ["av", "cmp", "plan", "bk"];
+const NAMES = { single: "Single VM", restart: "Single VM + auto-restart", "ap-one-zone": "Active-passive, one zone", "ap-two-zones": "Active-passive, two zones", "aa-two-zones": "Active-active, two zones", "aa-dr": "Active-active + DR region" };
+function tab(n) { for (const t of TABS) { $(t).hidden = t !== n; $("b-" + t).className = t === n ? "on" : ""; } }
+async function post(url, body) { const r = await fetch(url, { method: "POST", body: JSON.stringify(body) }); const j = await r.json(); if (!r.ok) throw new Error(j.error); return j; }
+const pc = (a, d = 4) => (100 * a).toFixed(d) + "%";
+const mins = (m) => m >= 1440 ? (m / 1440).toFixed(1) + " days" : m >= 120 ? (m / 60).toFixed(1) + " h" : m.toFixed(1) + " min";
+const fail = (o, e) => { $(o).innerHTML = `<div class="warn">${e.message}</div>`; };
+
+async function runAv() {
+  try {
+    const r = await post("/api/avail", { mtbf: $("mtbf").value, mttr: $("mttr").value });
+    $("avOut").innerHTML = `<div class="card"><h2>Result</h2><div class="big"><div><b>${pc(r.availability, 4)}</b><span>availability of one VM host</span></div><div><b>${r.nines.toFixed(2)}</b><span>nines</span></div><div><b>${mins(r.downtime_min_per_year)}</b><span>downtime per year</span></div></div>
+      <table><tr><th>Independent copies (any one is enough)</th><th>Availability</th><th>Nines</th><th>Downtime per year</th></tr>` +
+      r.copies.map((c) => `<tr><td>${c.copies}</td><td class="n">${pc(c.availability, 6)}</td><td class="n">${c.nines.toFixed(2)}</td><td class="n">${mins(c.downtime_min_per_year)}</td></tr>`).join("") + `</table></div>
+      <div class="card"><h2>What an SLA target allows</h2><table><tr><th>Target</th><th>Downtime per year</th><th>Downtime per month</th></tr>` +
+      r.sla.map((s) => `<tr><td>${pc(s.target, 3)}</td><td class="n">${mins(s.per_year)}</td><td class="n">${mins(s.per_month)}</td></tr>`).join("") + `</table></div>`;
+  } catch (e) { fail("avOut", e); }
+}
+async function runCmp() {
+  try {
+    const r = await post("/api/compare", { host_mtbf: $("c-hm").value, host_mttr: $("c-hr").value, zone_mtbf: $("c-zm").value, zone_mttr: $("c-zr").value, region_mtbf: $("c-rm").value, region_mttr: $("c-rr").value, years: $("c-y").value, tier: $("c-t").value });
+    const rows = Object.entries(r.results), max = Math.max(...rows.map(([, x]) => x.downtime_min_per_year));
+    $("cmpOut").innerHTML = `<div class="card"><h2>${r.years} simulated years, DR tier: ${r.tier}</h2><table><tr><th>Design</th><th>Availability</th><th>Downtime per year</th><th></th><th>Incidents per year</th><th>Longest incident</th></tr>` +
+      rows.map(([k, x]) => `<tr><td>${NAMES[k]}</td><td class="n">${pc(x.availability, 4)}</td><td class="n">${mins(x.downtime_min_per_year)}</td><td style="width:22%"><div class="bar" style="width:${100 * x.downtime_min_per_year / max}%"></div></td><td class="n">${x.incidents_per_year.toFixed(2)}</td><td class="n">${mins(x.longest_incident_min)}</td></tr>`).join("") + `</table></div>
+      <div class="card"><h2>Region disasters with ${r.tier}</h2><p>A region disaster happens ${r.dr.disasters_per_year.toFixed(3)} times a year. The service is moved to the DR region in ${r.dr.takeovers_per_year.toFixed(3)} of them a year, after ${mins(r.dr.rto_minutes)} (the recovery time), and about ${mins(r.dr.mean_data_loss_min)} of the newest data is lost each time (the recovery point).</p></div>`;
+  } catch (e) { fail("cmpOut", e); }
+}
+async function runPlan() {
+  try {
+    const r = await post("/api/plan", { target: +$("p-a").value / 100, rto: +$("p-rto").value, rpo: +$("p-rpo").value });
+    const name = (x) => NAMES[x.strategy] + (x.tier ? " (" + x.tier + ")" : "");
+    $("planOut").innerHTML = `<div class="card"><h2>Options</h2><table><tr><th>Design</th><th>Cost</th><th>Availability</th><th>Recovery time</th><th>Data loss</th><th>Verdict</th></tr>` +
+      r.rows.map((x) => `<tr class="${r.recommended === null ? (x.meets ? "" : "no") : (x.strategy === r.recommended.strategy && x.tier === r.recommended.tier ? "best" : (x.meets ? "" : "no"))}"><td>${name(x)}</td><td class="n">${x.cost.toFixed(2)}</td><td class="n">${pc(x.availability, 4)}</td><td class="n">${mins(x.rto_minutes)}</td><td class="n">${x.strategy === "aa-dr" ? mins(x.rpo_minutes) : "whole region lost"}</td><td>${x.meets ? "meets all limits" : x.why_not.join("; ")}</td></tr>`).join("") + `</table>` +
+      (r.recommended ? `<div class="rec">Cheapest design that meets every limit: <b>${name(r.recommended)}</b> at a cost of ${r.recommended.cost.toFixed(2)} VM equivalents.</div>` : `<div class="warn">No design in the list meets all of these limits.</div>`) + `</div>`;
+  } catch (e) { fail("planOut", e); }
+}
+async function runBk() {
+  try {
+    const r = await post("/api/backup", { interval: $("b-i").value, success: $("b-p").value, size_gb: $("b-s").value, throughput: $("b-t").value });
+    $("bkOut").innerHTML = `<div class="card"><h2>Result</h2><div class="big"><div><b>${mins(r.mean)}</b><span>average age of the newest good backup (data you would lose)</span></div><div><b>${mins(r.p99)}</b><span>age exceeded only 1 time in 100</span></div><div><b>${mins(r.restore)}</b><span>time to restore (copy, boot, check)</span></div></div></div>`;
+  } catch (e) { fail("bkOut", e); }
+}
+runAv(); runCmp(); runPlan(); runBk();
+</script>
+</body>
+</html>

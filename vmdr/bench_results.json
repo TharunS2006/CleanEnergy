@@ -1,0 +1,607 @@
+{
+ "validation": [
+  {
+   "what": "Single VM, one zone",
+   "model": "closed form",
+   "exact_unavail": 0.002440173883341057,
+   "sim_unavail": 0.0024315898540629988,
+   "error_pct": -0.35177940951916814
+  },
+  {
+   "what": "Active-active pair in two zones",
+   "model": "closed form",
+   "exact_unavail": 0.0002785916010964451,
+   "sim_unavail": 0.0002724832438086855,
+   "error_pct": -2.1925848674974815
+  },
+  {
+   "what": "Active-passive pair, MTBF 2000 h, MTTR 4 h, failover 2 min",
+   "model": "Markov chain",
+   "exact_unavail": 2.0479708969093832e-05,
+   "sim_unavail": 2.080183130148683e-05,
+   "error_pct": 1.5728853026139908
+  },
+  {
+   "what": "Active-passive pair, MTBF 2000 h, MTTR 4 h, failover 10 min",
+   "model": "Markov chain",
+   "exact_unavail": 8.381798051898481e-05,
+   "sim_unavail": 8.580517284717537e-05,
+   "error_pct": 2.3708425279232985
+  },
+  {
+   "what": "Active-passive pair, MTBF 500 h, MTTR 8 h, failover 2 min",
+   "model": "Markov chain",
+   "exact_unavail": 0.0003133406870922998,
+   "sim_unavail": 0.00031009859914943316,
+   "error_pct": -1.0346846344635758
+  },
+  {
+   "what": "Active-passive pair, MTBF 1000 h, MTTR 24 h, failover 5 min",
+   "model": "Markov chain",
+   "exact_unavail": 0.0006304082878930454,
+   "sim_unavail": 0.0006347825064204615,
+   "error_pct": 0.6938707202019297
+  }
+ ],
+ "strategies": {
+  "single": {
+   "strategy": "single",
+   "availability": 0.9975645589533902,
+   "downtime_min_per_year": 1280.0678140980822,
+   "incidents_per_year": 4.89205,
+   "mean_incident_min": 261.66286405455423,
+   "longest_incident_min": 24001.24687001109,
+   "takeovers": 0
+  },
+  "restart": {
+   "strategy": "restart",
+   "availability": 0.9995094003786305,
+   "downtime_min_per_year": 257.8591609918331,
+   "incidents_per_year": 4.89315,
+   "mean_incident_min": 52.69798820633602,
+   "longest_incident_min": 24001.24687001109,
+   "takeovers": 0
+  },
+  "ap-one-zone": {
+   "strategy": "ap-one-zone",
+   "availability": 0.9995376081091928,
+   "downtime_min_per_year": 243.03317780829792,
+   "incidents_per_year": 4.90635,
+   "mean_incident_min": 49.5344151575607,
+   "longest_incident_min": 24001.24687001109,
+   "takeovers": 0
+  },
+  "ap-two-zones": {
+   "strategy": "ap-two-zones",
+   "availability": 0.9997011344989534,
+   "downtime_min_per_year": 157.08370735008018,
+   "incidents_per_year": 4.9106,
+   "mean_incident_min": 31.98869941556636,
+   "longest_incident_min": 24001.24687001109,
+   "takeovers": 0
+  },
+  "aa-two-zones": {
+   "strategy": "aa-two-zones",
+   "availability": 0.9997194910564514,
+   "downtime_min_per_year": 147.43550072911884,
+   "incidents_per_year": 0.07395,
+   "mean_incident_min": 1993.718738730478,
+   "longest_incident_min": 24001.24687001109,
+   "takeovers": 0
+  },
+  "aa-dr": {
+   "strategy": "aa-dr",
+   "availability": 0.9999930526602029,
+   "downtime_min_per_year": 3.6515217973536056,
+   "incidents_per_year": 0.074,
+   "mean_incident_min": 49.344889153427104,
+   "longest_incident_min": 719.2714467644691,
+   "takeovers": 1015
+  }
+ },
+ "spread": {
+  "single": [
+   1261.1205746253725,
+   1290.3179223433658
+  ],
+  "restart": [
+   254.41050738107356,
+   260.6526432572794
+  ],
+  "ap-one-zone": [
+   239.37491675988272,
+   245.5489743475606
+  ],
+  "ap-two-zones": [
+   150.5731643695532,
+   159.08508768155193
+  ],
+  "aa-two-zones": [
+   140.90695998521875,
+   149.3761735527258
+  ],
+  "aa-dr": [
+   3.108043542517087,
+   3.6708741669072333
+  ]
+ },
+ "failover_sweep": [
+  {
+   "failover_min": 1,
+   "downtime_min_per_year": 152.2715656932231,
+   "host_only_sim_min_per_year": 6.304104426309239,
+   "host_only_markov_min_per_year": 6.447098923684763
+  },
+  {
+   "failover_min": 2,
+   "downtime_min_per_year": 157.08370735008018,
+   "host_only_sim_min_per_year": 10.647356933595576,
+   "host_only_markov_min_per_year": 10.764135034155718
+  },
+  {
+   "failover_min": 5,
+   "downtime_min_per_year": 171.4007804963148,
+   "host_only_sim_min_per_year": 23.569129808037832,
+   "host_only_markov_min_per_year": 23.503382452984972
+  },
+  {
+   "failover_min": 10,
+   "downtime_min_per_year": 194.82549407405995,
+   "host_only_sim_min_per_year": 44.75964898725332,
+   "host_only_markov_min_per_year": 44.05473056077842
+  },
+  {
+   "failover_min": 20,
+   "downtime_min_per_year": 240.20009699226944,
+   "host_only_sim_min_per_year": 85.82950124482987,
+   "host_only_markov_min_per_year": 82.78174025075315
+  },
+  {
+   "failover_min": 30,
+   "downtime_min_per_year": 283.74874483886896,
+   "host_only_sim_min_per_year": 125.15252995987795,
+   "host_only_markov_min_per_year": 118.63498383620622
+  },
+  {
+   "failover_min": 60,
+   "downtime_min_per_year": 403.288303160708,
+   "host_only_sim_min_per_year": 234.10873310597495,
+   "host_only_markov_min_per_year": 211.83048025724977
+  }
+ ],
+ "mttr_sweep": [
+  {
+   "mttr": 1,
+   "single": 502.3324345915675,
+   "restart": 264.88960766936316,
+   "ap-two-zones": 162.27180777238638,
+   "aa-two-zones": 152.69065648780318
+  },
+  {
+   "mttr": 4,
+   "single": 1280.0678140980822,
+   "restart": 257.8591609918331,
+   "ap-two-zones": 157.08370735008018,
+   "aa-two-zones": 147.43550072911884
+  },
+  {
+   "mttr": 12,
+   "single": 3353.234973499284,
+   "restart": 248.09634005406497,
+   "ap-two-zones": 163.2924310345058,
+   "aa-two-zones": 153.64352606487304
+  },
+  {
+   "mttr": 24,
+   "single": 6457.4062345915,
+   "restart": 261.476127735217,
+   "ap-two-zones": 235.9233157032767,
+   "aa-two-zones": 226.32336301134214
+  },
+  {
+   "mttr": 48,
+   "single": 12527.340703822463,
+   "restart": 254.54556201525867,
+   "ap-two-zones": 450.5858673994221,
+   "aa-two-zones": 441.06955359060174
+  }
+ ],
+ "tiers": [
+  {
+   "key": "backup-restore",
+   "name": "Backup and restore",
+   "restore_min": 240.0,
+   "rto_min": 245.0,
+   "rpo_mean_min": 720.0,
+   "mean_loss_sim": 730.4473048963639,
+   "cost_extra": 0.1,
+   "takeovers_per_year": 0.0464,
+   "disasters_per_year": 0.05095,
+   "availability": 0.999972319945886,
+   "downtime_min_per_year": 14.548636442321266
+  },
+  {
+   "key": "pilot-light",
+   "name": "Pilot light",
+   "restore_min": 60.0,
+   "rto_min": 65.0,
+   "rpo_mean_min": 5.0,
+   "mean_loss_sim": 5.035366922968804,
+   "cost_extra": 0.3,
+   "takeovers_per_year": 0.0496,
+   "disasters_per_year": 0.05095,
+   "availability": 0.9999887557618153,
+   "downtime_min_per_year": 5.909971589878405
+  },
+  {
+   "key": "warm-standby",
+   "name": "Warm standby",
+   "restore_min": 15.0,
+   "rto_min": 20.0,
+   "rpo_mean_min": 1.0,
+   "mean_loss_sim": 1.011024966440882,
+   "cost_extra": 1.0,
+   "takeovers_per_year": 0.05075,
+   "disasters_per_year": 0.05095,
+   "availability": 0.9999930526602029,
+   "downtime_min_per_year": 3.6515217973536056
+  },
+  {
+   "key": "multi-active",
+   "name": "Multi-region active-active",
+   "restore_min": 2.0,
+   "rto_min": 7.0,
+   "rpo_mean_min": 0.1,
+   "mean_loss_sim": 0.10142612783821929,
+   "cost_extra": 2.1,
+   "takeovers_per_year": 0.05085,
+   "disasters_per_year": 0.05095,
+   "availability": 0.9999943084207958,
+   "downtime_min_per_year": 2.99149402972855
+  }
+ ],
+ "backup": [
+  {
+   "interval": 60,
+   "success": 1.0,
+   "mean": 30.0,
+   "p99": 60,
+   "sim_mean": 30.014258975857103
+  },
+  {
+   "interval": 240,
+   "success": 1.0,
+   "mean": 120.0,
+   "p99": 240,
+   "sim_mean": 120.05703590342841
+  },
+  {
+   "interval": 1440,
+   "success": 1.0,
+   "mean": 720.0,
+   "p99": 1440,
+   "sim_mean": 720.3422154205705
+  },
+  {
+   "interval": 60,
+   "success": 0.98,
+   "mean": 31.22448979591837,
+   "p99": 180,
+   "sim_mean": 31.31988468398317
+  },
+  {
+   "interval": 240,
+   "success": 0.98,
+   "mean": 124.89795918367348,
+   "p99": 720,
+   "sim_mean": 125.27953873593268
+  },
+  {
+   "interval": 1440,
+   "success": 0.98,
+   "mean": 749.3877551020408,
+   "p99": 4320,
+   "sim_mean": 751.677232415596
+  },
+  {
+   "interval": 60,
+   "success": 0.9,
+   "mean": 36.66666666666667,
+   "p99": 180,
+   "sim_mean": 36.76345806763164
+  },
+  {
+   "interval": 240,
+   "success": 0.9,
+   "mean": 146.66666666666669,
+   "p99": 720,
+   "sim_mean": 147.05383227052656
+  },
+  {
+   "interval": 1440,
+   "success": 0.9,
+   "mean": 880.0000000000001,
+   "p99": 4320,
+   "sim_mean": 882.3229936231595
+  }
+ ],
+ "restore": [
+  {
+   "size_gb": 100,
+   "minutes": 47.06666666666666
+  },
+  {
+   "size_gb": 500,
+   "minutes": 115.33333333333333
+  },
+  {
+   "size_gb": 1000,
+   "minutes": 200.66666666666666
+  },
+  {
+   "size_gb": 5000,
+   "minutes": 883.3333333333334
+  }
+ ],
+ "planner": {
+  "internal tool": {
+   "target": 0.999,
+   "rto": null,
+   "rpo": null,
+   "choice": "restart",
+   "cost": 1.1,
+   "availability": 0.9995072120533056,
+   "options": [
+    {
+     "name": "single",
+     "cost": 1.0,
+     "availability": 0.9975913501727421,
+     "meets": false
+    },
+    {
+     "name": "restart",
+     "cost": 1.1,
+     "availability": 0.9995072120533056,
+     "meets": true
+    },
+    {
+     "name": "ap-one-zone",
+     "cost": 2.0,
+     "availability": 0.9995358395718188,
+     "meets": true
+    },
+    {
+     "name": "ap-two-zones",
+     "cost": 2.05,
+     "availability": 0.9997088411804488,
+     "meets": true
+    },
+    {
+     "name": "aa-two-zones",
+     "cost": 2.1,
+     "availability": 0.9997271411326486,
+     "meets": true
+    },
+    {
+     "name": "aa-dr + backup-restore",
+     "cost": 2.2,
+     "availability": 0.9999709063166233,
+     "meets": true
+    },
+    {
+     "name": "aa-dr + pilot-light",
+     "cost": 2.4,
+     "availability": 0.9999883188459012,
+     "meets": true
+    },
+    {
+     "name": "aa-dr + warm-standby",
+     "cost": 3.1,
+     "availability": 0.9999928372871754,
+     "meets": true
+    },
+    {
+     "name": "aa-dr + multi-active",
+     "cost": 4.2,
+     "availability": 0.9999941543533803,
+     "meets": true
+    }
+   ]
+  },
+  "web shop": {
+   "target": 0.9999,
+   "rto": 60,
+   "rpo": 15,
+   "choice": "aa-dr + warm-standby",
+   "cost": 3.1,
+   "availability": 0.9999928372871754,
+   "options": [
+    {
+     "name": "single",
+     "cost": 1.0,
+     "availability": 0.9975913501727421,
+     "meets": false
+    },
+    {
+     "name": "restart",
+     "cost": 1.1,
+     "availability": 0.9995072120533056,
+     "meets": false
+    },
+    {
+     "name": "ap-one-zone",
+     "cost": 2.0,
+     "availability": 0.9995358395718188,
+     "meets": false
+    },
+    {
+     "name": "ap-two-zones",
+     "cost": 2.05,
+     "availability": 0.9997088411804488,
+     "meets": false
+    },
+    {
+     "name": "aa-two-zones",
+     "cost": 2.1,
+     "availability": 0.9997271411326486,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + backup-restore",
+     "cost": 2.2,
+     "availability": 0.9999709063166233,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + pilot-light",
+     "cost": 2.4,
+     "availability": 0.9999883188459012,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + warm-standby",
+     "cost": 3.1,
+     "availability": 0.9999928372871754,
+     "meets": true
+    },
+    {
+     "name": "aa-dr + multi-active",
+     "cost": 4.2,
+     "availability": 0.9999941543533803,
+     "meets": true
+    }
+   ]
+  },
+  "payments": {
+   "target": 0.9999,
+   "rto": 15,
+   "rpo": 1,
+   "choice": "aa-dr + multi-active",
+   "cost": 4.2,
+   "availability": 0.9999941543533803,
+   "options": [
+    {
+     "name": "single",
+     "cost": 1.0,
+     "availability": 0.9975913501727421,
+     "meets": false
+    },
+    {
+     "name": "restart",
+     "cost": 1.1,
+     "availability": 0.9995072120533056,
+     "meets": false
+    },
+    {
+     "name": "ap-one-zone",
+     "cost": 2.0,
+     "availability": 0.9995358395718188,
+     "meets": false
+    },
+    {
+     "name": "ap-two-zones",
+     "cost": 2.05,
+     "availability": 0.9997088411804488,
+     "meets": false
+    },
+    {
+     "name": "aa-two-zones",
+     "cost": 2.1,
+     "availability": 0.9997271411326486,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + backup-restore",
+     "cost": 2.2,
+     "availability": 0.9999709063166233,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + pilot-light",
+     "cost": 2.4,
+     "availability": 0.9999883188459012,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + warm-standby",
+     "cost": 3.1,
+     "availability": 0.9999928372871754,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + multi-active",
+     "cost": 4.2,
+     "availability": 0.9999941543533803,
+     "meets": true
+    }
+   ]
+  },
+  "five nines": {
+   "target": 0.99999,
+   "rto": 15,
+   "rpo": 1,
+   "choice": "aa-dr + multi-active",
+   "cost": 4.2,
+   "availability": 0.9999941543533803,
+   "options": [
+    {
+     "name": "single",
+     "cost": 1.0,
+     "availability": 0.9975913501727421,
+     "meets": false
+    },
+    {
+     "name": "restart",
+     "cost": 1.1,
+     "availability": 0.9995072120533056,
+     "meets": false
+    },
+    {
+     "name": "ap-one-zone",
+     "cost": 2.0,
+     "availability": 0.9995358395718188,
+     "meets": false
+    },
+    {
+     "name": "ap-two-zones",
+     "cost": 2.05,
+     "availability": 0.9997088411804488,
+     "meets": false
+    },
+    {
+     "name": "aa-two-zones",
+     "cost": 2.1,
+     "availability": 0.9997271411326486,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + backup-restore",
+     "cost": 2.2,
+     "availability": 0.9999709063166233,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + pilot-light",
+     "cost": 2.4,
+     "availability": 0.9999883188459012,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + warm-standby",
+     "cost": 3.1,
+     "availability": 0.9999928372871754,
+     "meets": false
+    },
+    {
+     "name": "aa-dr + multi-active",
+     "cost": 4.2,
+     "availability": 0.9999941543533803,
+     "meets": true
+    }
+   ]
+  }
+ },
+ "time_compare_s": 1.96,
+ "time_plan_s": 0.36,
+ "years": 20000
+}
