@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPU, Memory and I/O Resource Optimization</title>
+<style>
+  :root { --ink:#1f2630; --mute:#5f6b7a; --line:#d8dde5; --bg:#f3f5f7; --accent:#1f5f5b; --good:#1d7a45; --goodbg:#e4f3ea; --warn:#8a5a00; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.5 "Segoe UI", system-ui, sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:var(--accent); color:#fff; padding:14px 28px; }
+  header h1 { margin:0; font-size:20px; font-weight:600; } header p { margin:2px 0 0; font-size:13px; opacity:.85; }
+  main { max-width:1000px; margin:20px auto; padding:0 18px 40px; }
+  .tabs { display:flex; gap:4px; margin-bottom:14px; }
+  .tabs button { background:#e2e7ec; color:var(--ink); } .tabs button.on { background:var(--accent); color:#fff; }
+  button { font:inherit; padding:8px 16px; border:0; border-radius:4px; background:var(--accent); color:#fff; cursor:pointer; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:6px; padding:16px 18px; margin-bottom:14px; }
+  h2 { font-size:16px; margin:0 0 8px; }
+  label { display:block; font-size:13px; color:var(--mute); margin:8px 0 3px; }
+  input, textarea { font:14px "Consolas","Courier New",monospace; padding:7px 9px; border:1px solid #aab3be; border-radius:4px; width:100%; }
+  textarea { height:92px; } .row { display:flex; gap:12px; align-items:flex-end; } .row > div { flex:1; }
+  table { border-collapse:collapse; width:100%; font-size:14px; } th, td { text-align:left; padding:5px 9px; border-bottom:1px solid var(--line); }
+  th { background:#eef1f4; } td.n { text-align:right; font-variant-numeric:tabular-nums; } tr.best td { background:var(--goodbg); font-weight:600; }
+  .rec { background:var(--goodbg); border:1px solid #b7dcc5; color:#155d33; padding:8px 12px; border-radius:4px; margin:10px 0; }
+  .gantt { display:flex; height:30px; margin:6px 0 2px; border:1px solid #9aa5b1; } .gantt div { text-align:center; line-height:28px; font-size:12px; color:#fff; overflow:hidden; border-right:1px solid #fff; }
+  .ticks { position:relative; height:16px; font-size:11px; color:var(--mute); } .ticks span { position:absolute; transform:translateX(-50%); }
+  .fr td { text-align:center; font-family:"Consolas","Courier New",monospace; padding:3px 6px; border:1px solid var(--line); } .fr td.f { background:#fde8e6; } .fr td.h { background:#e6f3ea; }
+  .note { font-size:13px; color:var(--mute); } .err { color:#b3261e; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<header><h1>CPU, Memory and I/O Resource Optimization</h1><p>Simulate the classic algorithms on your own workload and let the optimizer pick the best one</p></header>
+<main>
+  <div class="tabs"><button id="b-cpu" class="on" onclick="tab('cpu')">CPU scheduling</button><button id="b-memory" onclick="tab('memory')">Memory (page replacement)</button><button id="b-disk" onclick="tab('disk')">I/O (disk scheduling)</button></div>
+
+  <section id="cpu">
+    <div class="card"><h2>Processes</h2>
+      <label>One per line: name arrival burst [priority]  (a smaller priority number is more urgent)</label>
+      <textarea id="procs">P1 0 8 2
+P2 1 4 1
+P3 2 9 3
+P4 3 5 2
+P5 4 2 1</textarea>
+      <div class="row"><div><label>Round-robin quantum</label><input id="q" type="number" value="4" min="1"></div><div><button onclick="runCpu()">Compare algorithms</button></div></div>
+    </div>
+    <div id="cpuOut"></div>
+  </section>
+
+  <section id="memory" hidden>
+    <div class="card"><h2>Page reference string</h2>
+      <label>Page numbers separated by spaces</label>
+      <textarea id="refs">7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1</textarea>
+      <div class="row"><div><label>Number of frames</label><input id="frames" type="number" value="3" min="1"></div><div><button onclick="runMem()">Compare algorithms</button></div></div>
+    </div>
+    <div id="memOut"></div>
+  </section>
+
+  <section id="disk" hidden>
+    <div class="card"><h2>Disk request queue</h2>
+      <label>Cylinder numbers separated by spaces</label>
+      <textarea id="reqs">98 183 37 122 14 124 65 67</textarea>
+      <div class="row"><div><label>Head position</label><input id="head" type="number" value="53"></div><div><label>Cylinders on the disk</label><input id="cyl" type="number" value="200"></div>
+        <div><label>First direction (1 up, -1 down)</label><input id="dir" type="number" value="1" min="-1" max="1"></div><div><button onclick="runDisk()">Compare algorithms</button></div></div>
+    </div>
+    <div id="diskOut"></div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const COL = ["#1f5f5b", "#7a4b9a", "#b5651d", "#2b6cb0", "#a23b3b", "#5a7d1f", "#7b6d00", "#34495e", "#9c2f6f"];
+function tab(n) { for (const t of ["cpu", "memory", "disk"]) { $(t).hidden = t !== n; $("b-" + t).className = t === n ? "on" : ""; } }
+async function post(url, body) { const r = await fetch(url, { method: "POST", body: JSON.stringify(body) }); const j = await r.json(); if (!r.ok) throw new Error(j.error); return j; }
+const nums = (s) => s.trim().split(/[\s,]+/).filter(Boolean).map(Number);
+const f2 = (x) => (Math.round(x * 100) / 100).toFixed(2);
+function fail(out, e) { $(out).innerHTML = `<div class="card err">${e.message}</div>`; }
+
+async function runCpu() {
+  try {
+    const procs = $("procs").value.trim().split("\n").filter(Boolean).map((l) => { const p = l.trim().split(/\s+/); return { pid: p[0], arrival: +p[1], burst: +p[2], priority: +(p[3] || 0) }; });
+    const r = await post("/api/cpu", { procs, quantum: +$("q").value });
+    const names = procs.map((p) => p.pid);
+    let h = `<div class="card"><h2>Comparison</h2><table><tr><th>Algorithm</th><th>Avg waiting</th><th>Avg turnaround</th><th>Avg response</th><th>Max waiting</th><th>Utilisation</th><th>Context switches</th></tr>` +
+      Object.entries(r.runs).map(([a, x]) => { const m = x.metrics; return `<tr class="${a === r.recommended ? "best" : ""}"><td>${a}</td><td class="n">${f2(m.avg_waiting)}</td><td class="n">${f2(m.avg_turnaround)}</td><td class="n">${f2(m.avg_response)}</td><td class="n">${m.max_waiting}</td><td class="n">${f2(100 * m.utilisation)}%</td><td class="n">${m.context_switches}</td></tr>`; }).join("") + `</table>
+      <div class="rec">Recommended for waiting time: <b>${r.recommended}</b> - ${r.why}. It lowers the average waiting time by ${f2(r.improvement)}% against FCFS.</div></div>`;
+    for (const a of ["FCFS", "SRTF", "RR"]) {
+      const g = r.runs[a].gantt, end = g[g.length - 1][2], start = g[0][1], span = end - start;
+      h += `<div class="card"><h2>Gantt chart: ${a}</h2><div class="gantt">` + g.map(([pid, s, e]) => `<div style="width:${100 * (e - s) / span}%;background:${pid === "idle" ? "#b8c0ca" : COL[names.indexOf(pid) % COL.length]}">${pid === "idle" ? "" : pid}</div>`).join("") + `</div><div class="ticks">` +
+        [...new Set(g.flatMap(([, s, e]) => [s, e]))].map((t) => `<span style="left:${100 * (t - start) / span}%">${t}</span>`).join("") + `</div></div>`;
+    }
+    $("cpuOut").innerHTML = h;
+  } catch (e) { fail("cpuOut", e); }
+}
+
+async function runMem() {
+  try {
+    const refs = nums($("refs").value), frames = +$("frames").value;
+    const r = await post("/api/memory", { refs, frames });
+    let h = `<div class="card"><h2>Comparison with ${frames} frames</h2><table><tr><th>Algorithm</th><th>Page faults</th><th>Hits</th><th>Fault rate</th></tr>` +
+      Object.entries(r.runs).map(([a, x]) => `<tr class="${a === r.recommended ? "best" : ""}"><td>${a}${a === "OPT" ? " (needs the future: yardstick only)" : ""}</td><td class="n">${x.faults}</td><td class="n">${x.hits}</td><td class="n">${f2(x.fault_rate)}</td></tr>`).join("") + `</table>
+      <div class="rec">Recommended: <b>${r.recommended}</b>. It is ${r.gap} fault${r.gap === 1 ? "" : "s"} above the optimal ${r.optimal} and has ${f2(r.improvement)}% fewer faults than FIFO.</div></div>`;
+    const st = r.runs[r.recommended].steps;
+    h += `<div class="card"><h2>${r.recommended}: contents of the frames after each reference (red = fault)</h2><div style="overflow-x:auto"><table class="fr"><tr><td><b>page</b></td>` + st.map((s) => `<td class="${s.fault ? "f" : "h"}">${s.page}</td>`).join("") + `</tr>` +
+      Array.from({ length: frames }, (_, k) => `<tr><td><b>f${k + 1}</b></td>` + st.map((s) => `<td>${s.frames[k] ?? ""}</td>`).join("") + `</tr>`).join("") + `</table></div></div>`;
+    $("memOut").innerHTML = h;
+  } catch (e) { fail("memOut", e); }
+}
+
+async function runDisk() {
+  try {
+    const cyl = +$("cyl").value, head = +$("head").value;
+    const r = await post("/api/disk", { requests: nums($("reqs").value), head, cylinders: cyl, direction: +$("dir").value });
+    let h = `<div class="card"><h2>Comparison</h2><table><tr><th>Algorithm</th><th>Total head movement</th><th>Average per request</th></tr>` +
+      Object.entries(r.runs).map(([a, x]) => `<tr class="${a === r.recommended ? "best" : ""}"><td>${a}</td><td class="n">${x.total}</td><td class="n">${f2(x.average)}</td></tr>`).join("") + `</table>
+      <div class="rec">Recommended: <b>${r.recommended}</b> - ${f2(r.improvement)}% less head movement than FCFS. Check for starvation of far requests under heavy load.</div></div>`;
+    const p = r.runs[r.recommended].path, W = 900, H = 40 + 28 * p.length;
+    const x = (c) => 30 + (W - 60) * c / (cyl - 1);
+    h += `<div class="card"><h2>Path of the head: ${r.recommended}</h2><svg viewBox="0 0 ${W} ${H}" width="100%"><line x1="${x(0)}" y1="14" x2="${x(cyl - 1)}" y2="14" stroke="#9aa5b1"/>` +
+      `<text x="${x(0)}" y="10" font-size="11" fill="#5f6b7a" text-anchor="middle">0</text><text x="${x(cyl - 1)}" y="10" font-size="11" fill="#5f6b7a" text-anchor="middle">${cyl - 1}</text>` +
+      `<polyline fill="none" stroke="#1f5f5b" stroke-width="2" points="${p.map((c, i) => `${x(c)},${30 + 28 * i}`).join(" ")}"/>` +
+      p.map((c, i) => `<circle cx="${x(c)}" cy="${30 + 28 * i}" r="4" fill="${i === 0 ? "#b5651d" : "#1f5f5b"}"/><text x="${x(c) + 7}" y="${34 + 28 * i}" font-size="11" fill="#1f2630">${c}</text>`).join("") + `</svg></div>`;
+    $("diskOut").innerHTML = h;
+  } catch (e) { fail("diskOut", e); }
+}
+runCpu(); runMem(); runDisk();
+</script>
+</body>
+</html>

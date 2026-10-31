@@ -1,0 +1,460 @@
+{
+ "cpu": {
+  "mixed": {
+   "FCFS": {
+    "avg_waiting": 18.15,
+    "avg_turnaround": 26.38,
+    "avg_response": 18.15,
+    "max_waiting": 37.86,
+    "switches": 7.0,
+    "utilisation": 0.956,
+    "best_share": 1.6
+   },
+   "SJF": {
+    "avg_waiting": 11.3,
+    "avg_turnaround": 19.53,
+    "avg_response": 11.3,
+    "max_waiting": 32.5,
+    "switches": 7.0,
+    "utilisation": 0.956,
+    "best_share": 11.2
+   },
+   "SRTF": {
+    "avg_waiting": 7.69,
+    "avg_turnaround": 15.92,
+    "avg_response": 5.93,
+    "max_waiting": 31.53,
+    "switches": 8.95,
+    "utilisation": 0.956,
+    "best_share": 100.0
+   },
+   "PRIORITY": {
+    "avg_waiting": 18.38,
+    "avg_turnaround": 26.61,
+    "avg_response": 18.38,
+    "max_waiting": 43.95,
+    "switches": 7.0,
+    "utilisation": 0.956,
+    "best_share": 1.8
+   },
+   "PRIORITY-P": {
+    "avg_waiting": 17.8,
+    "avg_turnaround": 26.03,
+    "avg_response": 14.79,
+    "max_waiting": 44.93,
+    "switches": 8.47,
+    "utilisation": 0.956,
+    "best_share": 1.8
+   },
+   "RR": {
+    "avg_waiting": 16.14,
+    "avg_turnaround": 24.37,
+    "avg_response": 5.13,
+    "max_waiting": 32.69,
+    "switches": 17.1,
+    "utilisation": 0.956,
+    "best_share": 0.8
+   }
+  },
+  "short": {
+   "FCFS": {
+    "avg_waiting": 3.12,
+    "avg_turnaround": 6.56,
+    "avg_response": 3.12,
+    "max_waiting": 7.47,
+    "switches": 7.0,
+    "utilisation": 0.858,
+    "best_share": 7.8
+   },
+   "SJF": {
+    "avg_waiting": 2.45,
+    "avg_turnaround": 5.89,
+    "avg_response": 2.45,
+    "max_waiting": 8.0,
+    "switches": 7.0,
+    "utilisation": 0.858,
+    "best_share": 40.0
+   },
+   "SRTF": {
+    "avg_waiting": 2.24,
+    "avg_turnaround": 5.68,
+    "avg_response": 2.01,
+    "max_waiting": 8.23,
+    "switches": 7.8,
+    "utilisation": 0.858,
+    "best_share": 100.0
+   },
+   "PRIORITY": {
+    "avg_waiting": 3.09,
+    "avg_turnaround": 6.52,
+    "avg_response": 3.09,
+    "max_waiting": 9.97,
+    "switches": 7.0,
+    "utilisation": 0.858,
+    "best_share": 10.4
+   },
+   "PRIORITY-P": {
+    "avg_waiting": 3.41,
+    "avg_turnaround": 6.84,
+    "avg_response": 2.47,
+    "max_waiting": 11.56,
+    "switches": 8.35,
+    "utilisation": 0.858,
+    "best_share": 7.4
+   },
+   "RR": {
+    "avg_waiting": 3.9,
+    "avg_turnaround": 7.33,
+    "avg_response": 2.49,
+    "max_waiting": 8.33,
+    "switches": 9.1,
+    "utilisation": 0.858,
+    "best_share": 3.2
+   }
+  }
+ },
+ "quantum": [
+  {
+   "quantum": 1,
+   "avg_waiting": 16.08,
+   "avg_response": 1.27,
+   "avg_turnaround": 24.38,
+   "switches": 55.21,
+   "score": 27.83
+  },
+  {
+   "quantum": 2,
+   "avg_waiting": 16.2,
+   "avg_response": 2.72,
+   "avg_turnaround": 24.5,
+   "switches": 30.06,
+   "score": 26.38
+  },
+  {
+   "quantum": 3,
+   "avg_waiting": 16.41,
+   "avg_response": 4.01,
+   "avg_turnaround": 24.71,
+   "switches": 21.56,
+   "score": 26.06
+  },
+  {
+   "quantum": 4,
+   "avg_waiting": 16.43,
+   "avg_response": 5.26,
+   "avg_turnaround": 24.73,
+   "switches": 17.29,
+   "score": 25.82
+  },
+  {
+   "quantum": 5,
+   "avg_waiting": 15.68,
+   "avg_response": 6.38,
+   "avg_turnaround": 23.99,
+   "switches": 14.2,
+   "score": 24.88
+  },
+  {
+   "quantum": 6,
+   "avg_waiting": 16.12,
+   "avg_response": 7.22,
+   "avg_turnaround": 24.43,
+   "switches": 12.79,
+   "score": 25.23
+  },
+  {
+   "quantum": 7,
+   "avg_waiting": 16.61,
+   "avg_response": 8.07,
+   "avg_turnaround": 24.92,
+   "switches": 11.95,
+   "score": 25.67
+  },
+  {
+   "quantum": 8,
+   "avg_waiting": 17.17,
+   "avg_response": 8.89,
+   "avg_turnaround": 25.47,
+   "switches": 11.25,
+   "score": 26.18
+  },
+  {
+   "quantum": 9,
+   "avg_waiting": 17.63,
+   "avg_response": 9.66,
+   "avg_turnaround": 25.93,
+   "switches": 10.76,
+   "score": 26.6
+  },
+  {
+   "quantum": 10,
+   "avg_waiting": 17.81,
+   "avg_response": 10.44,
+   "avg_turnaround": 26.12,
+   "switches": 10.22,
+   "score": 26.75
+  },
+  {
+   "quantum": 11,
+   "avg_waiting": 18.21,
+   "avg_response": 11.19,
+   "avg_turnaround": 26.52,
+   "switches": 9.89,
+   "score": 27.14
+  },
+  {
+   "quantum": 12,
+   "avg_waiting": 18.49,
+   "avg_response": 11.82,
+   "avg_turnaround": 26.8,
+   "switches": 9.56,
+   "score": 27.39
+  },
+  {
+   "quantum": 13,
+   "avg_waiting": 18.64,
+   "avg_response": 12.4,
+   "avg_turnaround": 26.95,
+   "switches": 9.28,
+   "score": 27.53
+  },
+  {
+   "quantum": 14,
+   "avg_waiting": 18.8,
+   "avg_response": 13.01,
+   "avg_turnaround": 27.11,
+   "switches": 9.0,
+   "score": 27.67
+  },
+  {
+   "quantum": 15,
+   "avg_waiting": 18.71,
+   "avg_response": 13.56,
+   "avg_turnaround": 27.02,
+   "switches": 8.67,
+   "score": 27.56
+  },
+  {
+   "quantum": 16,
+   "avg_waiting": 19.04,
+   "avg_response": 14.12,
+   "avg_turnaround": 27.34,
+   "switches": 8.55,
+   "score": 27.88
+  },
+  {
+   "quantum": 17,
+   "avg_waiting": 19.13,
+   "avg_response": 14.65,
+   "avg_turnaround": 27.44,
+   "switches": 8.4,
+   "score": 27.96
+  },
+  {
+   "quantum": 18,
+   "avg_waiting": 19.39,
+   "avg_response": 15.13,
+   "avg_turnaround": 27.7,
+   "switches": 8.29,
+   "score": 28.21
+  },
+  {
+   "quantum": 19,
+   "avg_waiting": 19.56,
+   "avg_response": 15.6,
+   "avg_turnaround": 27.86,
+   "switches": 8.18,
+   "score": 28.38
+  },
+  {
+   "quantum": 20,
+   "avg_waiting": 19.77,
+   "avg_response": 16.05,
+   "avg_turnaround": 28.08,
+   "switches": 8.08,
+   "score": 28.58
+  }
+ ],
+ "quantum_best_score": 5,
+ "memory": {
+  "3": {
+   "FIFO": 0.5282,
+   "LRU": 0.5186,
+   "OPT": 0.3519,
+   "CLOCK": 0.5252
+  },
+  "4": {
+   "FIFO": 0.4014,
+   "LRU": 0.3804,
+   "OPT": 0.2461,
+   "CLOCK": 0.3937
+  },
+  "5": {
+   "FIFO": 0.3028,
+   "LRU": 0.2628,
+   "OPT": 0.1817,
+   "CLOCK": 0.2875
+  },
+  "6": {
+   "FIFO": 0.2412,
+   "LRU": 0.2002,
+   "OPT": 0.1496,
+   "CLOCK": 0.2217
+  },
+  "7": {
+   "FIFO": 0.2029,
+   "LRU": 0.1704,
+   "OPT": 0.1318,
+   "CLOCK": 0.1857
+  },
+  "8": {
+   "FIFO": 0.178,
+   "LRU": 0.1553,
+   "OPT": 0.1194,
+   "CLOCK": 0.1645
+  },
+  "9": {
+   "FIFO": 0.1624,
+   "LRU": 0.1462,
+   "OPT": 0.1105,
+   "CLOCK": 0.1507
+  },
+  "10": {
+   "FIFO": 0.1515,
+   "LRU": 0.137,
+   "OPT": 0.104,
+   "CLOCK": 0.1403
+  },
+  "11": {
+   "FIFO": 0.1414,
+   "LRU": 0.1285,
+   "OPT": 0.099,
+   "CLOCK": 0.1314
+  },
+  "12": {
+   "FIFO": 0.131,
+   "LRU": 0.1212,
+   "OPT": 0.0952,
+   "CLOCK": 0.1228
+  }
+ },
+ "frames_for_18pct": {
+  "FIFO": 8,
+  "LRU": 7,
+  "CLOCK": 8
+ },
+ "memory_uniform": {
+  "FIFO": 0.6091,
+  "LRU": 0.6112,
+  "OPT": 0.354,
+  "CLOCK": 0.6119
+ },
+ "belady_strings_with_anomaly_of_500": {
+  "FIFO": 4,
+  "LRU": 0,
+  "OPT": 0,
+  "CLOCK": 1
+ },
+ "belady_book": {
+  "FIFO": [
+   12,
+   12,
+   9,
+   10,
+   5,
+   5,
+   5
+  ],
+  "LRU": [
+   12,
+   12,
+   10,
+   8,
+   5,
+   5,
+   5
+  ],
+  "OPT": [
+   12,
+   9,
+   7,
+   6,
+   5,
+   5,
+   5
+  ],
+  "CLOCK": [
+   12,
+   12,
+   9,
+   10,
+   5,
+   5,
+   5
+  ]
+ },
+ "disk": {
+  "uniform": {
+   "FCFS": 1347.2,
+   "SSTF": 257.9,
+   "SCAN": 279.6,
+   "C-SCAN": 375.0,
+   "LOOK": 263.1,
+   "C-LOOK": 343.2
+  },
+  "clustered": {
+   "FCFS": 958.8,
+   "SSTF": 162.5,
+   "SCAN": 232.9,
+   "C-SCAN": 326.4,
+   "LOOK": 176.7,
+   "C-LOOK": 223.9
+  }
+ },
+ "scenario": {
+  "cpu": {
+   "choice": "SRTF",
+   "baseline": 18.0,
+   "best": 6.62,
+   "gain": 63.19
+  },
+  "memory": {
+   "choice": "LRU",
+   "baseline": 67,
+   "best": 58,
+   "gain": 13.43
+  },
+  "disk": {
+   "choice": "LOOK",
+   "baseline": 934,
+   "best": 198,
+   "gain": 78.8
+  }
+ },
+ "perf": [
+  {
+   "what": "CPU, 50 processes (all 6 algorithms)",
+   "ms": 6.49
+  },
+  {
+   "what": "CPU, 100 processes (all 6 algorithms)",
+   "ms": 20.6
+  },
+  {
+   "what": "CPU, 200 processes (all 6 algorithms)",
+   "ms": 79.06
+  },
+  {
+   "what": "Memory, 1000 references, 8 frames (all 4 algorithms)",
+   "ms": 5.14
+  },
+  {
+   "what": "Memory, 5000 references, 8 frames (all 4 algorithms)",
+   "ms": 30.86
+  },
+  {
+   "what": "Disk, 1000 requests (all 6 algorithms)",
+   "ms": 41.32
+  }
+ ]
+}
