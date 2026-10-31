@@ -1,0 +1,56 @@
+{
+ "detect": {
+  "0.08": {
+   "1.25": {
+    "cloudpulse": 0.608,
+    "naive": 0.26
+   },
+   "1.5": {
+    "cloudpulse": 0.97,
+    "naive": 0.715
+   },
+   "2.0": {
+    "cloudpulse": 1.0,
+    "naive": 0.985
+   },
+   "3.0": {
+    "cloudpulse": 1.0,
+    "naive": 1.0
+   }
+  },
+  "0.15": {
+   "1.25": {
+    "cloudpulse": 0.39,
+    "naive": 0.145
+   },
+   "1.5": {
+    "cloudpulse": 0.682,
+    "naive": 0.463
+   },
+   "2.0": {
+    "cloudpulse": 0.96,
+    "naive": 0.905
+   },
+   "3.0": {
+    "cloudpulse": 1.0,
+    "naive": 1.0
+   }
+  }
+ },
+ "false_alarms": {
+  "0.08": {
+   "cloudpulse": 2.75,
+   "naive": 0.16
+  },
+  "0.15": {
+   "cloudpulse": 7.02,
+   "naive": 1.12
+  }
+ },
+ "forecast": {
+  "holt+weekday": 9.99,
+  "naive": 9.03,
+  "ma7": 11.51
+ },
+ "forecast_n": 2200
+}
