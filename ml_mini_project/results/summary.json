@@ -1,0 +1,25 @@
+{
+  "n": 768,
+  "zeros_as_missing": {
+    "Glucose": 5,
+    "BloodPressure": 35,
+    "SkinThickness": 227,
+    "Insulin": 374,
+    "BMI": 11
+  },
+  "K": 3,
+  "kmeans_silhouette": 0.19500407738247363,
+  "kmeans_davies_bouldin": 1.8342930783993776,
+  "kmeans_stability_ari_mean": 0.991243426643498,
+  "kmeans_stability_ari_min": 0.9808611702977311,
+  "dbscan": {
+    "eps": 2.0,
+    "min_samples": 16,
+    "clusters": 1,
+    "noise_points": 88,
+    "silhouette_non_noise": null
+  },
+  "ari_kmeans_vs_dbscan_non_noise": null,
+  "pca_variance_2": 0.4723203741075307,
+  "overall_diabetes_rate": 0.3489583333333333
+}

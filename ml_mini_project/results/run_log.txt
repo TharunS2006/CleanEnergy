@@ -1,0 +1,57 @@
+MISSING: {'Glucose': 5, 'BloodPressure': 35, 'SkinThickness': 227, 'Insulin': 374, 'BMI': 11}
+
+K-MEANS SELECTION
+  k  inertia  silhouette  davies_bouldin  calinski_harabasz
+ 2 4975.017       0.196           1.920            179.998
+ 3 4335.742       0.195           1.834            159.525
+ 4 3912.696       0.190           1.617            145.229
+ 5 3678.675       0.177           1.609            127.834
+ 6 3474.503       0.168           1.732            117.091
+ 7 3307.307       0.123           1.847            108.786
+ 8 3145.459       0.146           1.648            103.500
+
+DBSCAN valid configs (clusters>=2, noise<=25%), ignoring size rule
+  eps  min_samples  clusters  noise_pct  smallest_cluster_pct  silhouette_non_noise
+ 2.1            5         2        5.2                   0.5                 0.417
+ 2.0            5         2        6.0                   0.7                 0.410
+
+DBSCAN configs that also have every cluster >=5% of patients: 0
+
+K-MEANS PROFILES
+          size  Pregnancies  Glucose  BloodPressure  SkinThickness  Insulin    BMI  DiabetesPedigreeFunction    Age  diabetes_rate
+cluster                                                                                                                          
+0         248         7.37   130.79          78.42          30.02   139.63  32.81                      0.46  46.04           0.52
+1         335         2.28   106.62          66.76          24.21   113.33  28.50                      0.41  25.94           0.13
+2         185         1.95   136.64          74.49          36.76   191.57  39.15                      0.60  29.30           0.52
+
+DBSCAN PROFILES
+          size  Pregnancies  Glucose  BloodPressure  SkinThickness  Insulin    BMI  DiabetesPedigreeFunction    Age  diabetes_rate
+cluster                                                                                                                          
+-1         88         4.12   146.33          77.42          33.59   265.55  37.47                      0.81  38.11           0.55
+ 0        680         3.81   118.46          71.74          28.53   124.51  31.81                      0.43  32.61           0.32
+
+SUMMARY {
+ "n": 768,
+ "zeros_as_missing": {
+  "Glucose": 5,
+  "BloodPressure": 35,
+  "SkinThickness": 227,
+  "Insulin": 374,
+  "BMI": 11
+ },
+ "K": 3,
+ "kmeans_silhouette": 0.19500407738247363,
+ "kmeans_davies_bouldin": 1.8342930783993776,
+ "kmeans_stability_ari_mean": 0.991243426643498,
+ "kmeans_stability_ari_min": 0.9808611702977311,
+ "dbscan": {
+  "eps": 2.0,
+  "min_samples": 16,
+  "clusters": 1,
+  "noise_points": 88,
+  "silhouette_non_noise": null
+ },
+ "ari_kmeans_vs_dbscan_non_noise": null,
+ "pca_variance_2": 0.4723203741075307,
+ "overall_diabetes_rate": 0.3489583333333333
+}
