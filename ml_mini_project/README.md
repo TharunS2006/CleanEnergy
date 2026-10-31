@@ -8,7 +8,14 @@ ML Mini Project, topic 19 (Clustering). Team: Tamilmani B (111624102217), Yuvraj
 - `data/diabetes.csv`: Pima Indians Diabetes data (768 rows). Download the Kaggle copy and confirm it matches.
 - `figures/`, `results/`: outputs. `results/run_log.txt` is the printed output of the last run.
 
-## Run
+## Web app (for demo)
+```
+pip install -r requirements.txt
+python -m streamlit run app.py
+```
+On Windows you can also double-click `run_app.bat`. The browser opens at http://localhost:8501 with 5 pages: Dataset, K-Means (k slider), DBSCAN (eps and min_samples sliders), Find a patient's group, Summary and limits. Screenshots are in `screenshots/`.
+
+## Run the analysis script
 ```
 pip install -r requirements.txt
 python3 patient_segmentation.py
