@@ -1,0 +1,269 @@
+{
+ "designs": {
+  "basic": {
+   "hosts": 6,
+   "cpu_pct": 68.75,
+   "ram_pct": 38.541666666666664,
+   "n_plus_one": true,
+   "capacity_score": 100.0,
+   "counts": {
+    "critical": 2,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+   },
+   "policy_score": 0,
+   "hardening_score": 18.0,
+   "security_score": 7.2,
+   "db_routes": 41,
+   "db_shortest": 1,
+   "mgmt_shortest": 1,
+   "spofs": [
+    "array SAN1",
+    "cooling C1",
+    "edge FW1",
+    "feed A",
+    "rack R1",
+    "switch SW1"
+   ],
+   "resilience_score": 50.0,
+   "tier": "Tier I-like (basic capacity)",
+   "scenarios": 12,
+   "degraded": 0,
+   "e2e_down_min": 275.7793270615035,
+   "e2e_avail": 0.9994753056943274,
+   "tier_down": {
+    "web": 274.21975025786725,
+    "app": 274.1848972385255,
+    "db": 275.7444740421617,
+    "mgmt": 276.709979150506
+   },
+   "overall": 45.379999999999995
+  },
+  "segmented": {
+   "hosts": 6,
+   "cpu_pct": 68.75,
+   "ram_pct": 38.541666666666664,
+   "n_plus_one": true,
+   "capacity_score": 100.0,
+   "counts": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+   },
+   "policy_score": 100,
+   "hardening_score": 56.0,
+   "security_score": 82.4,
+   "db_routes": 1,
+   "db_shortest": 3,
+   "mgmt_shortest": null,
+   "spofs": [
+    "array SAN1",
+    "cooling C1",
+    "edge FW1",
+    "feed A",
+    "rack R1",
+    "switch SW1"
+   ],
+   "resilience_score": 50.0,
+   "tier": "Tier I-like (basic capacity)",
+   "scenarios": 12,
+   "degraded": 0,
+   "e2e_down_min": 275.7793270615035,
+   "e2e_avail": 0.9994753056943274,
+   "tier_down": {
+    "web": 274.21975025786725,
+    "app": 274.1848972385255,
+    "db": 275.7444740421617,
+    "mgmt": 276.709979150506
+   },
+   "overall": 75.46000000000001
+  },
+  "resilient": {
+   "hosts": 7,
+   "cpu_pct": 58.92857142857143,
+   "ram_pct": 33.035714285714285,
+   "n_plus_one": true,
+   "capacity_score": 100.0,
+   "counts": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+   },
+   "policy_score": 100,
+   "hardening_score": 86.0,
+   "security_score": 94.4,
+   "db_routes": 1,
+   "db_shortest": 3,
+   "mgmt_shortest": null,
+   "spofs": [],
+   "resilience_score": 100.0,
+   "tier": "Tier III-like (concurrently maintainable)",
+   "scenarios": 19,
+   "degraded": 2,
+   "e2e_down_min": 2.550395655061584,
+   "e2e_avail": 0.9999951476490581,
+   "tier_down": {
+    "web": 0.006382658824324608,
+    "app": 0.006382658824324608,
+    "db": 2.550395655061584,
+    "mgmt": 1.8673842762743589
+   },
+   "overall": 97.76
+  },
+  "basic+fixes": {
+   "hosts": 7,
+   "cpu_pct": 58.92857142857143,
+   "ram_pct": 33.035714285714285,
+   "n_plus_one": true,
+   "capacity_score": 100.0,
+   "counts": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+   },
+   "policy_score": 100,
+   "hardening_score": 18.0,
+   "security_score": 67.2,
+   "db_routes": 1,
+   "db_shortest": 3,
+   "mgmt_shortest": null,
+   "spofs": [],
+   "resilience_score": 100.0,
+   "tier": "Tier III-like (concurrently maintainable)",
+   "scenarios": 19,
+   "degraded": 2,
+   "e2e_down_min": 2.550395655061584,
+   "e2e_avail": 0.9999951476490581,
+   "tier_down": {
+    "web": 0.006382658824324608,
+    "app": 0.006382658824324608,
+    "db": 2.550395655061584,
+    "mgmt": 1.8673842762743589
+   },
+   "overall": 86.88
+  }
+ },
+ "fix_changes": [
+  "default action set to deny",
+  "removed rule allow any -> any port any",
+  "added intended flow app -> db port 5432",
+  "added intended flow dmz -> app port 8443",
+  "added intended flow internet -> dmz port 443",
+  "added intended flow mgmt -> app port 22",
+  "added intended flow mgmt -> db port 22",
+  "added intended flow mgmt -> dmz port 22",
+  "second firewall added",
+  "second power feed to every host",
+  "second switch to every host",
+  "second cooling unit for every row",
+  "hosts spread over two racks",
+  "storage mirrored over two arrays",
+  "1 extra host(s) added so that the loss of a host or of a whole rack can be absorbed"
+ ],
+ "fix_remaining": [
+  "mfa_admin",
+  "disk_encryption",
+  "immutable_backups",
+  "central_logging",
+  "secure_boot",
+  "rbac_least_privilege",
+  "vlan_isolation",
+  "intrusion_detection",
+  "snapshot_policy"
+ ],
+ "placement": {
+  "ff": {
+   "mean_hosts": 7.846666666666667,
+   "mean_gap": 0.3333333333333333,
+   "at_lower_bound_pct": 66.66666666666667
+  },
+  "bf": {
+   "mean_hosts": 7.83,
+   "mean_gap": 0.31666666666666665,
+   "at_lower_bound_pct": 68.33333333333333
+  },
+  "ffd": {
+   "mean_hosts": 8.053333333333333,
+   "mean_gap": 0.54,
+   "at_lower_bound_pct": 46.0
+  }
+ },
+ "detection": {
+  "injected": 476,
+  "flagged": 476,
+  "benign_duplicates": 17,
+  "benign_flagged_as_violation": 0,
+  "by_kind": {
+   "broad-rule": 70,
+   "unauthorised-flow": 406
+  }
+ },
+ "double_failures": {
+  "resilient": {
+   "components": 19,
+   "pairs": 171,
+   "tolerated": 162,
+   "pct": 94.73684210526316,
+   "examples": [
+    "cooling C1 + cooling C2",
+    "edge FW1 + edge FW2",
+    "feed A + feed B",
+    "host h2 + rack R1"
+   ]
+  },
+  "basic+fixes": {
+   "components": 19,
+   "pairs": 171,
+   "tolerated": 162,
+   "pct": 94.73684210526316,
+   "examples": [
+    "cooling C1 + cooling C2",
+    "edge FW1 + edge FW2",
+    "feed A + feed B",
+    "host h1 + rack R2"
+   ]
+  }
+ },
+ "scale": [
+  {
+   "vms": 20,
+   "hosts": 5,
+   "seconds": 0.04,
+   "overall": 97.76,
+   "scenarios": 17
+  },
+  {
+   "vms": 40,
+   "hosts": 7,
+   "seconds": 0.07,
+   "overall": 97.76,
+   "scenarios": 19
+  },
+  {
+   "vms": 80,
+   "hosts": 10,
+   "seconds": 0.14,
+   "overall": 94.57818181818182,
+   "scenarios": 22
+  },
+  {
+   "vms": 160,
+   "hosts": 18,
+   "seconds": 0.34,
+   "overall": 95.42666666666668,
+   "scenarios": 30
+  },
+  {
+   "vms": 320,
+   "hosts": 34,
+   "seconds": 0.75,
+   "overall": 96.23826086956522,
+   "scenarios": 46
+  }
+ ],
+ "years": 5000
+}

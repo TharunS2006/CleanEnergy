@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Secure and Resilient Virtualized Data Centre Design</title>
+<style>
+  :root { --ink:#1d2430; --mute:#5b6676; --line:#d8dde6; --bg:#f1f3f6; --accent:#27405e; --good:#1d7a45; --goodbg:#e4f3ea; --bad:#b3261e; --badbg:#fbe9e7; --warn:#8a5a00; --warnbg:#fff3d6; }
+  * { box-sizing:border-box; } body { margin:0; font:15px/1.5 "Segoe UI", system-ui, sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:var(--accent); color:#fff; padding:14px 28px; } header h1 { margin:0; font-size:20px; font-weight:600; } header p { margin:2px 0 0; font-size:13px; opacity:.85; }
+  main { max-width:1020px; margin:20px auto; padding:0 18px 40px; }
+  .tabs { display:flex; gap:4px; margin-bottom:14px; flex-wrap:wrap; } .tabs button { background:#e0e5ec; color:var(--ink); } .tabs button.on { background:var(--accent); color:#fff; }
+  button { font:inherit; padding:8px 16px; border:0; border-radius:4px; background:var(--accent); color:#fff; cursor:pointer; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:6px; padding:16px 18px; margin-bottom:14px; } h2 { font-size:16px; margin:0 0 8px; }
+  label { display:block; font-size:13px; color:var(--mute); margin:8px 0 3px; } select, input, textarea { font:14px "Consolas","Courier New",monospace; padding:7px 9px; border:1px solid #aab3c0; border-radius:4px; width:100%; }
+  textarea { height:170px; } .row { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; } .row > div { flex:1; min-width:150px; }
+  table { border-collapse:collapse; width:100%; font-size:14px; } th, td { text-align:left; padding:5px 9px; border-bottom:1px solid var(--line); vertical-align:top; } th { background:#eceff4; }
+  td.n { text-align:right; font-variant-numeric:tabular-nums; }
+  .scores { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:6px; } @media (max-width:760px){ .scores{grid-template-columns:1fr 1fr;} }
+  .score { border:1px solid var(--line); border-radius:6px; padding:10px 12px; background:#fff; } .score b { display:block; font-size:28px; } .score span { font-size:13px; color:var(--mute); }
+  .good { color:var(--good); } .mid { color:var(--warn); } .low { color:var(--bad); }
+  .sev { padding:1px 8px; border-radius:9px; font-size:12px; font-weight:600; } .sev.critical { background:var(--badbg); color:var(--bad); } .sev.high { background:#fde8d4; color:#a24a00; } .sev.medium { background:var(--warnbg); color:var(--warn); } .sev.low { background:#e8ecf3; color:var(--mute); }
+  .ok { color:var(--good); font-weight:600; } .no { color:var(--bad); font-weight:600; } .part { color:var(--warn); font-weight:600; }
+  .bar { height:12px; background:#7b93b4; border-radius:2px; } .barbg { background:#e3e7ee; border-radius:2px; width:140px; display:inline-block; vertical-align:middle; }
+  .rec { background:var(--goodbg); border:1px solid #b7dcc5; color:#155d33; padding:8px 12px; border-radius:4px; margin:10px 0; } .note { font-size:13px; color:var(--mute); } [hidden]{display:none !important;}
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:14px; } @media (max-width:860px){ .two{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<header><h1>Secure and Resilient Virtualized Data Centre Design</h1><p>Evaluate a design for capacity, security and resilience, and see what an automatic remediation fixes</p></header>
+<main>
+  <div class="card"><div class="row"><div><label>Reference design</label><select id="kind"><option value="basic">Basic: flat network, one of everything</option><option value="segmented">Segmented: zones and a default-deny firewall</option><option value="resilient" selected>Resilient: segmented, two of every path</option><option value="hardened">Basic after automatic remediation</option></select></div>
+    <div><label>Number of VMs</label><input id="nvm" type="number" value="40" min="12" max="200"></div><div><button onclick="run()">Evaluate</button></div></div></div>
+  <div class="tabs"><button id="b-ov" class="on" onclick="tab('ov')">Overview</button><button id="b-sec" onclick="tab('sec')">Security</button><button id="b-res" onclick="tab('res')">Resilience</button><button id="b-cap" onclick="tab('cap')">Capacity</button><button id="b-fix" onclick="tab('fix')">Remediation</button></div>
+  <section id="ov"></section><section id="sec" hidden></section><section id="res" hidden></section><section id="cap" hidden></section><section id="fix" hidden></section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const TABS = ["ov", "sec", "res", "cap", "fix"];
+function tab(n) { for (const t of TABS) { $(t).hidden = t !== n; $("b-" + t).className = t === n ? "on" : ""; } }
+async function post(url, body) { const r = await fetch(url, { method: "POST", body: JSON.stringify(body) }); const j = await r.json(); if (!r.ok) throw new Error(j.error); return j; }
+const cls = (v) => v >= 85 ? "good" : v >= 60 ? "mid" : "low";
+const f1 = (x) => x.toFixed(1);
+const scoreBox = (label, v) => `<div class="score"><b class="${cls(v)}">${f1(v)}</b><span>${label}</span></div>`;
+const mins = (m) => m >= 120 ? (m / 60).toFixed(1) + " h" : m.toFixed(1) + " min";
+let LAST = null, RULES = null;
+
+function parseRules(text) { return text.trim().split("\n").filter(Boolean).map((l) => { const p = l.trim().split(/\s+/); return { action: p[0], src: p[1], dst: p[2], port: p[3], encrypted: p[4] !== "plain" }; }); }
+const showRules = (rules) => rules.map((r) => `${r.action} ${r.src} ${r.dst} ${r.port}${r.encrypted ? "" : " plain"}`).join("\n");
+
+function paintOverview(r) {
+  const c = r.capacity, rs = r.resilience, e = rs.availability.end_to_end;
+  $("ov").innerHTML = `<div class="card"><h2>${r.name}: scores out of 100</h2><div class="scores">${scoreBox("overall", r.overall)}${scoreBox("capacity", c.score)}${scoreBox("security", r.security.score)}${scoreBox("resilience", rs.score)}</div>
+    <p class="note">overall = 25% capacity + 40% security + 35% resilience</p>
+    <table><tr><th>Hosts</th><td>${c.hosts} hosts for ${c.vms} VMs: CPU ${f1(c.cpu_pct)}% and memory ${f1(c.ram_pct)}% in use; survives the loss of any one host: <span class="${c.n_plus_one ? "ok" : "no"}">${c.n_plus_one ? "yes" : "no"}</span></td></tr>
+    <tr><th>Security</th><td>${r.security.counts.critical} critical, ${r.security.counts.high} high, ${r.security.counts.medium} medium, ${r.security.counts.low} low findings; hardening checklist ${f1(r.security.hardening_score)}%</td></tr>
+    <tr><th>Resilience</th><td>${rs.spofs.length} single point(s) of failure; ${rs.tier.label}</td></tr>
+    <tr><th>Availability</th><td>end to end ${(100 * e.availability).toFixed(4)}% (${mins(e.downtime_min_per_year)} of downtime a year, simulated)</td></tr></table></div>`;
+}
+function paintSecurity(r) {
+  const s = r.security;
+  const paths = Object.entries(s.paths).map(([z, p]) => `<tr><td>internet to ${z}</td><td class="n">${p.count}</td><td class="n">${p.shortest ?? "-"}</td><td>${p.example ? p.example.join(" > ") : "<span class='ok'>no route</span>"}</td></tr>`).join("");
+  $("sec").innerHTML = `<div class="two"><div class="card"><h2>Firewall rules (first match wins)</h2><label>action source destination port [plain]</label><textarea id="rules">${showRules(r.rules)}</textarea>
+      <label>Default action</label><select id="defact"><option ${r.default_action === "deny" ? "selected" : ""}>deny</option><option ${r.default_action === "allow" ? "selected" : ""}>allow</option></select><p><button onclick="rerun()">Evaluate these rules</button></p>
+      <p class="note">zones: internet, dmz, app, db, mgmt, storage. Use "any" as a wildcard.</p></div>
+    <div class="card"><h2>Security score ${f1(s.score)}</h2><p>Policy ${f1(s.policy_score)} (60%) and hardening ${f1(s.hardening_score)} (40%).</p><table><tr><th>Route</th><th>Routes</th><th>Shortest</th><th>Example</th></tr>${paths}</table></div></div>
+    <div class="card"><h2>Findings</h2>${s.findings.length ? `<table><tr><th>Severity</th><th>Finding</th><th>Fix</th></tr>` + s.findings.map((f) => `<tr><td><span class="sev ${f.severity}">${f.severity}</span></td><td>${f.text}</td><td>${f.fix}</td></tr>`).join("") + `</table>` : `<p class="ok">No findings: the rules match the intended policy exactly.</p>`}</div>
+    <div class="card"><h2>Hardening checklist</h2><table>` + Object.entries(s.hardening.items).map(([k, v]) => `<tr><td>${k.replace(/_/g, " ")}</td><td class="${v ? "ok" : "no"}">${v ? "done" : "missing"}</td></tr>`).join("") + `</table></div>`;
+}
+function paintResilience(r) {
+  const rs = r.resilience, a = rs.availability;
+  $("res").innerHTML = `<div class="card"><h2>${rs.tier.label}</h2><table>` + Object.entries(rs.tier.properties).map(([k, v]) => `<tr><td>${k}</td><td class="${v ? "ok" : "no"}">${v ? "yes" : "no"}</td></tr>`).join("") + `</table>
+    <p class="note">A simplified reading of the tier ideas; it cannot judge compartmentalisation, so the top tier is never awarded.</p></div>
+    <div class="card"><h2>Simulated availability (${rs.availability.years || "1000"} years)</h2><table><tr><th>Service</th><th>Availability</th><th>Downtime per year</th></tr>` +
+    [["end to end", a.end_to_end], ...Object.entries(a.tiers).map(([k, v]) => ["tier " + k, v])].map(([k, v]) => `<tr><td>${k}</td><td class="n">${(100 * v.availability).toFixed(4)}%</td><td class="n">${mins(v.downtime_min_per_year)}</td></tr>`).join("") + `</table></div>
+    <div class="card"><h2>What happens when one component fails (${rs.scenarios.length} scenarios, ${rs.spofs.length} not survived)</h2><table><tr><th>Component</th><th>Hosts down</th><th>VMs affected</th><th>Restarted</th><th>Still down</th><th>Result</th></tr>` +
+    rs.scenarios.map((s) => `<tr><td>${s.component}</td><td class="n">${s.hosts_down}</td><td class="n">${s.vms_affected}</td><td class="n">${s.vms_restarted}</td><td class="n">${s.vms_down}</td><td class="${s.tolerated ? (s.degraded ? "part" : "ok") : "no"}">${s.tolerated ? (s.degraded ? "survives, degraded" : "survives") : "service down: " + (s.services_down.join(", ") || "critical VM lost")}</td></tr>`).join("") + `</table></div>`;
+}
+function paintCapacity(r) {
+  const c = r.capacity;
+  $("cap").innerHTML = `<div class="card"><h2>${c.hosts} hosts</h2><p>${c.n_plus_one ? "Any single host can fail and its VMs fit on the others." : "Some hosts cannot be lost without losing VMs: " + Object.keys(c.failing_hosts).join(", ")}</p><table><tr><th>Host</th><th>Rack</th><th>VMs</th><th>CPU</th><th>Memory</th></tr>` +
+    c.per_host.map((h) => `<tr><td>${h.host}</td><td>${h.rack}</td><td class="n">${h.vms}</td><td><span class="barbg"><div class="bar" style="width:${h.cpu_pct}%"></div></span> ${f1(h.cpu_pct)}%</td><td><span class="barbg"><div class="bar" style="width:${h.ram_pct}%"></div></span> ${f1(h.ram_pct)}%</td></tr>`).join("") + `</table></div>`;
+}
+async function run(extra) {
+  try {
+    const body = Object.assign({ kind: $("kind").value, n_vms: +$("nvm").value }, extra || {});
+    const r = await post("/api/evaluate", body); LAST = r; RULES = r.rules;
+    paintOverview(r); paintSecurity(r); paintResilience(r); paintCapacity(r); runFix();
+  } catch (e) { $("ov").innerHTML = `<div class="card no">${e.message}</div>`; }
+}
+function rerun() { run({ rules: parseRules($("rules").value), default_action: $("defact").value }); tab("sec"); }
+async function runFix() {
+  try {
+    const kind = $("kind").value === "hardened" ? "basic" : $("kind").value;
+    const r = await post("/api/harden", { kind: kind === "resilient" ? "segmented" : kind, n_vms: +$("nvm").value });
+    const row = (n, a, b, fmt) => `<tr><td>${n}</td><td class="n">${fmt(a)}</td><td class="n">${fmt(b)}</td></tr>`;
+    const B = r.before, A = r.after, id = (x) => f1(x);
+    $("fix").innerHTML = `<div class="card"><h2>Automatic remediation of the ${kind} design</h2><table><tr><th></th><th>Before</th><th>After</th></tr>` +
+      row("Overall score", B.overall, A.overall, id) + row("Security score", B.security.score, A.security.score, id) + row("Resilience score", B.resilience.score, A.resilience.score, id) +
+      row("Hosts", B.capacity.hosts, A.capacity.hosts, (x) => x) + row("Critical findings", B.security.counts.critical, A.security.counts.critical, (x) => x) +
+      row("Single points of failure", B.resilience.spofs.length, A.resilience.spofs.length, (x) => x) +
+      row("Downtime per year (end to end)", B.resilience.availability.end_to_end.downtime_min_per_year, A.resilience.availability.end_to_end.downtime_min_per_year, mins) + `</table></div>
+      <div class="two"><div class="card"><h2>Changes made (${r.changes.length})</h2>${r.changes.length ? "<ul>" + r.changes.map((c) => `<li>${c}</li>`).join("") + "</ul>" : "<p>Nothing to change.</p>"}</div>
+      <div class="card"><h2>Left for people (${r.still_to_do.length})</h2><p class="note">These need staff and process, not a configuration change.</p><ul>${r.still_to_do.map((c) => `<li>${c.replace(/_/g, " ")}</li>`).join("")}</ul></div></div>`;
+  } catch (e) { $("fix").innerHTML = `<div class="card no">${e.message}</div>`; }
+}
+run();
+</script>
+</body>
+</html>
