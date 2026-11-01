@@ -184,9 +184,9 @@ for cap, code in snips:
 # ------------------------------------------------ 7 results
 set_text(P[201], "Before clustering, the data was examined. Insulin is strongly skewed to the right (skewness 3.38 after cleaning), as are the diabetes pedigree function (1.92) and age (1.13). Pregnancies and age are correlated (0.54), skin thickness and BMI are correlated (0.54), and glucose and insulin are correlated (0.42). Because several features move together, the data is expected to form overlapping groups and not sharply separated ones.")
 cur = P[201]
-cur = picture(cur._p, "figures/03_missing.png", 9, "Figure 7.1: Zero values treated as missing, by column")
-cur = picture(cur._p, "figures/01_distributions.png", 15, "Figure 7.2: Distribution of each feature after cleaning")
-cur = picture(cur._p, "figures/02_correlation.png", 10.5, "Figure 7.3: Correlation between the features")
+cur = picture(cur._p, "figures/03_missing.png", 7, "Figure 7.1: Zero values treated as missing, by column")
+cur = picture(cur._p, "figures/01_distributions.png", 13, "Figure 7.2: Distribution of each feature after cleaning")
+cur = picture(cur._p, "figures/02_correlation.png", 9, "Figure 7.3: Correlation between the features")
 set_text(T[7].rows[0].cells[1].paragraphs[0], "Clusters / noise"); set_text(T[7].rows[0].cells[2].paragraphs[0], "Silhouette")
 set_text(T[7].rows[0].cells[3].paragraphs[0], "Davies-Bouldin"); set_text(T[7].rows[0].cells[4].paragraphs[0], "Stability (ARI, 10 seeds)")
 fill_table(T[7], [("K-Means, k = 2", "2", "0.196", "1.920", "0.997", "Highest silhouette; splits younger lower-risk from older higher-risk patients"),
@@ -199,15 +199,15 @@ cur = clone(BODY, "Average profile of each K-Means group (original units):", cur
 rows = [(int(r["cluster"]), int(r["size"]), f"{r['Age']:.0f}", f"{r['Pregnancies']:.1f}", f"{r['Glucose']:.0f}", f"{r['BMI']:.1f}", f"{r['Insulin']:.0f}", f"{100*r['diabetes_rate']:.0f}%") for _, r in kprof.iterrows()]
 tb = new_table(cur._p, ["Cluster", "Patients", "Age", "Pregnancies", "Glucose", "BMI", "Insulin", "Diabetes rate"], rows, [1.8, 2, 1.6, 2.4, 2, 1.6, 1.8, 2.6]); cur = tb._tbl
 cur = paras(type("X", (), {"_p": cur})(), ["Cluster 0 (248 patients): older (average 46), many pregnancies (7.4), higher blood pressure; diabetes rate 52%. Cluster 1 (335 patients): younger (average 26), lowest glucose and BMI; diabetes rate 13%. Cluster 2 (185 patients): younger (average 29), highest BMI (39.2), skin thickness and insulin, high glucose; diabetes rate 52%."])
-cur = picture(cur._p, "figures/07_kmeans_profile_heatmap.png", 14.5, "Figure 7.5: Average of each standardised feature in each K-Means cluster")
-cur = picture(cur._p, "figures/06_pca_clusters.png", 16, "Figure 7.6: K-Means (left) and DBSCAN (right) shown on the first two principal components (47% of the variance)")
+cur = picture(cur._p, "figures/07_kmeans_profile_heatmap.png", 12.5, "Figure 7.5: Average of each standardised feature in each K-Means cluster")
+cur = picture(cur._p, "figures/06_pca_clusters.png", 14.5, "Figure 7.6: K-Means (left) and DBSCAN (right) shown on the first two principal components (47% of the variance)")
 
 set_text(P[204], "Confusion matrices are not used because clustering has no true labels. Instead, the groups were checked against the diabetes label after clustering, and the main errors and weaknesses are described below.")
 cur = P[204]
 ct = [("K-Means cluster 0", 120, 128, 248, "52%"), ("K-Means cluster 1", 291, 44, 335, "13%"), ("K-Means cluster 2", 89, 96, 185, "52%"), ("DBSCAN noise (-1)", 40, 48, 88, "55%"), ("DBSCAN cluster 0", 460, 220, 680, "32%")]
 tb = new_table(cur._p, ["Group", "No diabetes", "Diabetes", "Total", "Diabetes rate"], ct, [5, 3, 3, 2.5, 3]); cur = tb._tbl
 cur = paras(type("X", (), {"_p": cur})(), ["Table 7.3: Cross-tabulation of clusters and the diabetes label (the label was not used to build the clusters)."])
-cur = picture(cur._p, "figures/08_kmeans_outcome_rate.png", 8.5, "Figure 7.7: Diabetes rate in each K-Means cluster")
+cur = picture(cur._p, "figures/08_kmeans_outcome_rate.png", 7, "Figure 7.7: Diabetes rate in each K-Means cluster")
 err = ["The clusters overlap. The silhouette score of 0.195 is low, and in Figure 7.6 the three groups touch each other.",
        "Insulin (374 values, 48.7%) and skin thickness (227 values, 29.6%) are heavily filled with the median, which may hide real differences between patients.",
        "Choosing k = 3 is a judgement, because k = 2 has almost the same silhouette score.",
@@ -221,10 +221,10 @@ cur = paras(P[206], ["The groups are not sharply separated. The data behaves mor
  "The results describe patients with similar measurements. They are not diagnoses and must not be used for medical decisions."])
 h = clone(H2, "7.5 Web Application Output", cur._p)
 cur = clone(BODY, "A Streamlit web application was built so that the results can be explored interactively. Its pages are shown below.", h._p)
-cur = picture(cur._p, "screenshots/app_1_dataset.png", 15.5, "Figure 7.8: Dataset page (patients, features, diabetes rate and the first rows of data)")
-cur = picture(cur._p, "screenshots/app_2_kmeans.png", 15.5, "Figure 7.9: K-Means page with the k slider, quality scores and PCA scatter plot")
-cur = picture(cur._p, "screenshots/app_3_dbscan.png", 15.5, "Figure 7.10: DBSCAN page with eps and min_samples sliders (shown here at eps = 2.9 and min_samples = 22)")
-cur = picture(cur._p, "screenshots/app_4_lookup.png", 15.5, "Figure 7.11: Patient lookup page, which places a new patient in the most similar K-Means group")
+cur = picture(cur._p, "screenshots/app_1_dataset.png", 9.5, "Figure 7.8: Dataset page (patients, features, diabetes rate and the first rows of data)")
+cur = picture(cur._p, "screenshots/app_2_kmeans.png", 9.5, "Figure 7.9: K-Means page with the k slider, quality scores and PCA scatter plot")
+cur = picture(cur._p, "screenshots/app_3_dbscan.png", 9.5, "Figure 7.10: DBSCAN page with eps and min_samples sliders (shown here at eps = 2.9 and min_samples = 22)")
+cur = picture(cur._p, "screenshots/app_4_lookup.png", 9.5, "Figure 7.11: Patient lookup page, which places a new patient in the most similar K-Means group")
 
 # ------------------------------------------------ 8 conclusion
 set_text(P[223], "Using K-Means with k = 3, the 768 patients fell into three stable and interpretable groups with very different diabetes rates (52%, 13% and 52%), although the groups overlap (silhouette score 0.195). DBSCAN found one main group and 88 unusual patients and did not give separate segments. All four objectives were met: the data was cleaned and scaled, both algorithms were applied, they were evaluated with several measures and compared, and the results were checked against the diabetes label and presented in a web application. For patient segmentation on this data K-Means is the better method, and DBSCAN is useful for spotting outliers.")
@@ -273,7 +273,7 @@ for p in list(d.paragraphs):
     if is_blank(p): p._p.getparent().remove(p._p)
 for p in d.paragraphs:
     t = p.text.strip()
-    if p.style.name == "Heading 1" and (t.startswith("ABSTRACT") or t.startswith("TABLE OF CONTENTS") or re.match(r"^(2|3|4|5|6|7|8|9|10)\. ", t) or t.startswith("FACULTY EVALUATION")):
+    if p.style.name == "Heading 1" and (t.startswith("ABSTRACT") or t.startswith("TABLE OF CONTENTS") or re.match(r"^(1|10)\. ", t) or t.startswith("FACULTY EVALUATION")):
         p.paragraph_format.page_break_before = True
 for p in d.paragraphs:   # the R.M.K header before ACKNOWLEDGEMENT also starts a page
     if p.text.strip().startswith("R.M.K College") and p.style.name == "Heading 1":
@@ -301,4 +301,29 @@ for shd in d.element.body.iter(qn("w:shd")):
             rgb = [int(f[i:i+2], 16) for i in (0, 2, 4)]
             if sum(rgb) / 3 < 200: shd.set(qn("w:fill"), "D9D9D9")
         except Exception: pass
+
+# ---- justify, keep-with-next, page borders
+from docx.oxml import OxmlElement
+for p in d.paragraphs:
+    sn = p.style.name
+    has_pic = "w:drawing" in p._p.xml
+    if has_pic:
+        p.paragraph_format.keep_with_next = True; continue
+    if sn.startswith("Heading"):
+        p.paragraph_format.keep_with_next = True; continue
+    if p.runs and p.runs[0].font.name == "Courier New":
+        p.alignment = WD_ALIGN_PARAGRAPH.LEFT; continue
+    if p.alignment == CENTER or p.runs and p.runs[0].italic and p.text.startswith(("Figure","Table")):
+        continue
+    if len(p.text) > 60: p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+for sec in d.sections:
+    sp = sec._sectPr
+    for b in sp.findall(qn("w:pgBorders")): sp.remove(b)
+    pb = OxmlElement("w:pgBorders"); pb.set(qn("w:offsetFrom"), "page")
+    for side in ("top","left","bottom","right"):
+        e = OxmlElement("w:"+side); e.set(qn("w:val"),"single"); e.set(qn("w:sz"),"12"); e.set(qn("w:space"),"24"); e.set(qn("w:color"),"000000"); pb.append(e)
+    pgm = sp.find(qn("w:pgMar")); (pgm.addnext(pb) if pgm is not None else sp.append(pb))
+for t in d.tables:
+    for row in t.rows:
+        trPr = row._tr.get_or_add_trPr(); e = OxmlElement("w:cantSplit"); trPr.append(e)
 d.save("ML_Mini_Project_Report.docx"); print("saved")
