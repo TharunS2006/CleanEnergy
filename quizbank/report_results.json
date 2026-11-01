@@ -1,0 +1,903 @@
+{
+ "examples": [
+  {
+   "label": "Register a student",
+   "method": "POST",
+   "path": "/api/register",
+   "status": 201,
+   "request": {
+    "name": "Asha",
+    "email": "asha@example.com",
+    "password": "secret1",
+    "role": "student"
+   },
+   "response": {
+    "id": 1,
+    "name": "Asha",
+    "email": "asha@example.com",
+    "role": "student"
+   }
+  },
+  {
+   "label": "Register the same e-mail again",
+   "method": "POST",
+   "path": "/api/register",
+   "status": 409,
+   "request": {
+    "email": "asha@example.com"
+   },
+   "response": {
+    "detail": "This email is already registered"
+   }
+  },
+  {
+   "label": "Try to register as admin",
+   "method": "POST",
+   "path": "/api/register",
+   "status": 422,
+   "request": {
+    "role": "admin"
+   },
+   "response": {
+    "detail": "Value error, role must be student or teacher"
+   }
+  },
+  {
+   "label": "Login with a wrong password",
+   "method": "POST",
+   "path": "/api/login",
+   "status": 401,
+   "request": {
+    "email": "asha@example.com",
+    "password": "wrong"
+   },
+   "response": {
+    "detail": "Wrong email or password"
+   }
+  },
+  {
+   "label": "Login",
+   "method": "POST",
+   "path": "/api/login",
+   "status": 200,
+   "request": {
+    "email": "asha@example.com",
+    "password": "secret1"
+   },
+   "response": {
+    "token": "ff418bb53376...",
+    "name": "Asha",
+    "role": "student"
+   }
+  },
+  {
+   "label": "Call a protected route without a token",
+   "method": "GET",
+   "path": "/api/me",
+   "status": 401,
+   "request": null,
+   "response": {
+    "detail": "Please log in first"
+   }
+  },
+  {
+   "label": "A student tries to add a question",
+   "method": "POST",
+   "path": "/api/questions",
+   "status": 403,
+   "request": {
+    "...": "question"
+   },
+   "response": {
+    "detail": "Your role is not allowed to do this"
+   }
+  },
+  {
+   "label": "A teacher adds a question",
+   "method": "POST",
+   "path": "/api/questions",
+   "status": 201,
+   "request": {
+    "subject": "REST API",
+    "topic": "HTTP",
+    "difficulty": "easy",
+    "text": "Which HTTP method creates a resource?",
+    "answer": "b",
+    "...": "options, explanation"
+   },
+   "response": {
+    "id": 1,
+    "subject": "REST API",
+    "topic": "HTTP",
+    "difficulty": "easy",
+    "text": "Which HTTP method creates a resource?",
+    "opt_a": "HEAD",
+    "opt_b": "POST",
+    "opt_c": "GET",
+    "opt_d": "DELETE",
+    "answer": "b",
+    "explanation": "POST creates a new resource."
+   }
+  },
+  {
+   "label": "Add a question with wrong values",
+   "method": "POST",
+   "path": "/api/questions",
+   "status": 422,
+   "request": {
+    "difficulty": "extreme",
+    "answer": "z"
+   },
+   "response": {
+    "errors": [
+     "Value error, difficulty must be easy, medium or hard",
+     "Value error, answer must be a, b, c or d"
+    ]
+   }
+  },
+  {
+   "label": "List questions with filters",
+   "method": "GET",
+   "path": "/api/questions?subject=REST API&difficulty=easy",
+   "status": 200,
+   "request": null,
+   "response": {
+    "total": 4,
+    "page": 1,
+    "items": "4 questions"
+   }
+  },
+  {
+   "label": "Ask for more questions than exist",
+   "method": "POST",
+   "path": "/api/quizzes/random",
+   "status": 400,
+   "request": {
+    "count": 40
+   },
+   "response": {
+    "detail": "Only 8 matching questions are available, you asked for 40"
+   }
+  },
+  {
+   "label": "Create a random quiz",
+   "method": "POST",
+   "path": "/api/quizzes/random",
+   "status": 201,
+   "request": {
+    "title": "Methods quiz",
+    "subject": "REST API",
+    "minutes": 5,
+    "count": 4,
+    "max_attempts": 2
+   },
+   "response": {
+    "id": 1,
+    "title": "Methods quiz",
+    "subject": "REST API",
+    "minutes": 5,
+    "max_attempts": 2,
+    "questions": 4
+   }
+  },
+  {
+   "label": "Start an attempt",
+   "method": "POST",
+   "path": "/api/quizzes/1/start",
+   "status": 201,
+   "request": null,
+   "response": {
+    "attempt_id": 1,
+    "seconds_left": 300,
+    "questions": [
+     {
+      "id": 5,
+      "options": [
+       "a",
+       "d",
+       "b",
+       "c"
+      ]
+     },
+     {
+      "id": 3,
+      "options": [
+       "b",
+       "c",
+       "d",
+       "a"
+      ]
+     },
+     "..."
+    ]
+   }
+  },
+  {
+   "label": "Submit the answers with confidence levels",
+   "method": "POST",
+   "path": "/api/attempts/1/submit",
+   "status": 201,
+   "request": {
+    "answers": {
+     "<question id>": {
+      "choice": "b",
+      "confidence": 3
+     },
+     "...": "..."
+    }
+   },
+   "response": {
+    "score": 3,
+    "total": 4,
+    "percent": 75.0,
+    "late": false,
+    "calibration": 72,
+    "review": [
+     {
+      "correct": true,
+      "misconception": false
+     },
+     {
+      "correct": false,
+      "misconception": true
+     },
+     {
+      "correct": true,
+      "misconception": false
+     },
+     {
+      "correct": true,
+      "misconception": false
+     }
+    ]
+   }
+  },
+  {
+   "label": "Submit the same attempt twice",
+   "method": "POST",
+   "path": "/api/attempts/1/submit",
+   "status": 409,
+   "request": null,
+   "response": {
+    "detail": "This attempt was already submitted"
+   }
+  },
+  {
+   "label": "Questions waiting for revision",
+   "method": "GET",
+   "path": "/api/revision/due",
+   "status": 200,
+   "request": null,
+   "response": {
+    "due": 0,
+    "in_queue": 1
+   }
+  },
+  {
+   "label": "Teacher: results of a quiz",
+   "method": "GET",
+   "path": "/api/quizzes/1/results",
+   "status": 200,
+   "request": null,
+   "response": {
+    "quiz": "Methods quiz",
+    "attempts": 1,
+    "average_percent": 75.0
+   }
+  },
+  {
+   "label": "A teacher asks for the user list",
+   "method": "GET",
+   "path": "/api/users",
+   "status": 403,
+   "request": null,
+   "response": {
+    "detail": "Your role is not allowed to do this"
+   }
+  },
+  {
+   "label": "Results of a quiz that does not exist",
+   "method": "GET",
+   "path": "/api/quizzes/9999/results",
+   "status": 404,
+   "request": null,
+   "response": {
+    "detail": "Quiz not found"
+   }
+  }
+ ],
+ "status_codes": [
+  200,
+  201,
+  400,
+  401,
+  403,
+  404,
+  409,
+  422
+ ],
+ "calibration": {
+  "calibrated": {
+   "calibration_mean": 80.42366666666666,
+   "calibration_sd": 5.813332941513749,
+   "accuracy_mean": 60.260000000000005
+  },
+  "overconfident": {
+   "calibration_mean": 63.751,
+   "calibration_sd": 14.091735130919826,
+   "accuracy_mean": 59.72333333333333
+  },
+  "underconfident": {
+   "calibration_mean": 68.93333333333334,
+   "calibration_sd": 5.420967523319882,
+   "accuracy_mean": 59.55666666666667
+  },
+  "random": {
+   "calibration_mean": 69.17566666666667,
+   "calibration_sd": 9.37195148064455,
+   "accuracy_mean": 59.986666666666665
+  }
+ },
+ "calibration_claims": {
+  "1": 0.33,
+  "2": 0.66,
+  "3": 0.95
+ },
+ "calibration_worked": {
+  "marks": [
+   [
+    1,
+    3
+   ],
+   [
+    1,
+    3
+   ],
+   [
+    0,
+    3
+   ],
+   [
+    1,
+    2
+   ]
+  ],
+  "score": 74
+ },
+ "leitner": {
+  "0.5": {
+   "days_mean": 159.345,
+   "days_median": 116.0,
+   "reviews_mean": 62.0075,
+   "reviews_max": 338
+  },
+  "0.7": {
+   "days_mean": 66,
+   "days_median": 48.0,
+   "reviews_mean": 16.5575,
+   "reviews_max": 83
+  },
+  "0.9": {
+   "days_mean": 38.9475,
+   "days_median": 31.0,
+   "reviews_mean": 7.3125,
+   "reviews_max": 25
+  },
+  "0.97": {
+   "days_mean": 32.3075,
+   "days_median": 31.0,
+   "reviews_mean": 5.3675,
+   "reviews_max": 13
+  }
+ },
+ "leitner_intervals": [
+  1,
+  2,
+  4,
+  8,
+  16
+ ],
+ "leitner_cumulative_days": [
+  1,
+  3,
+  7,
+  15,
+  31
+ ],
+ "adaptive": {
+  "weak": {
+   "probabilities": [
+    0.8,
+    0.45,
+    0.15
+   ],
+   "share_all": {
+    "1": 47.77777777777778,
+    "2": 45.833333333333336,
+    "3": 6.388888888888889
+   },
+   "share_late": {
+    "1": 35.833333333333336,
+    "2": 56.666666666666664,
+    "3": 7.5
+   }
+  },
+  "average": {
+   "probabilities": [
+    0.92,
+    0.7,
+    0.4
+   ],
+   "share_all": {
+    "1": 23.055555555555557,
+    "2": 55.833333333333336,
+    "3": 21.11111111111111
+   },
+   "share_late": {
+    "1": 11.25,
+    "2": 64.58333333333333,
+    "3": 24.166666666666668
+   }
+  },
+  "strong": {
+   "probabilities": [
+    0.98,
+    0.9,
+    0.75
+   ],
+   "share_all": {
+    "1": 11.944444444444445,
+    "2": 26.38888888888889,
+    "3": 61.666666666666664
+   },
+   "share_late": {
+    "1": 2.5,
+    "2": 20.833333333333332,
+    "3": 76.66666666666667
+   }
+  }
+ },
+ "latency": {
+  "POST /api/login": {
+   "median_ms": 36.825743499974806,
+   "p95_ms": 54.26129199997831
+  },
+  "GET /api/questions": {
+   "median_ms": 4.767761000010751,
+   "p95_ms": 6.192253000051551
+  },
+  "GET /api/quizzes": {
+   "median_ms": 4.319610500004956,
+   "p95_ms": 5.480214000044725
+  },
+  "GET /api/practice/next": {
+   "median_ms": 5.224161499995716,
+   "p95_ms": 6.736632000013287
+  },
+  "start + submit a 20-question quiz": {
+   "median_ms": 14.805323999979692,
+   "p95_ms": 15.896827000005942
+  },
+  "GET /api/quizzes/{id}/analysis": {
+   "median_ms": 5.6235700000115685,
+   "p95_ms": 6.46780699997862
+  }
+ },
+ "demo": {
+  "analysis": {
+   "quiz": "REST API Fundamentals",
+   "students": 8,
+   "items": [
+    {
+     "question_id": 18,
+     "text": "Which HTTP method is normally used to create a new resource?",
+     "labelled": "easy",
+     "answered": 8,
+     "difficulty_index": 0.75,
+     "discrimination": 0.5,
+     "most_chosen_wrong_option": "c",
+     "flags": []
+    },
+    {
+     "question_id": 19,
+     "text": "Which status code means a resource was not found?",
+     "labelled": "easy",
+     "answered": 8,
+     "difficulty_index": 0.75,
+     "discrimination": 0.5,
+     "most_chosen_wrong_option": "a",
+     "flags": []
+    },
+    {
+     "question_id": 20,
+     "text": "Which status code is returned after a resource is created successfully?",
+     "labelled": "medium",
+     "answered": 8,
+     "difficulty_index": 0.75,
+     "discrimination": 0.5,
+     "most_chosen_wrong_option": "d",
+     "flags": [
+      "labelled medium but behaves like easy"
+     ]
+    },
+    {
+     "question_id": 21,
+     "text": "In REST, which method is idempotent (repeating it has the same effect as doing it once)?",
+     "labelled": "medium",
+     "answered": 8,
+     "difficulty_index": 0.88,
+     "discrimination": 0.0,
+     "most_chosen_wrong_option": "a",
+     "flags": [
+      "poor discrimination: strong students do not do better than weak ones",
+      "labelled medium but behaves like easy"
+     ]
+    },
+    {
+     "question_id": 22,
+     "text": "Which header carries a bearer token?",
+     "labelled": "hard",
+     "answered": 8,
+     "difficulty_index": 0.62,
+     "discrimination": 0.5,
+     "most_chosen_wrong_option": "d",
+     "flags": [
+      "labelled hard but behaves like medium"
+     ]
+    },
+    {
+     "question_id": 23,
+     "text": "Which status code should an API send when a logged-in user is not allowed to do something?",
+     "labelled": "hard",
+     "answered": 8,
+     "difficulty_index": 0.5,
+     "discrimination": 1.0,
+     "most_chosen_wrong_option": "c",
+     "flags": [
+      "labelled hard but behaves like medium"
+     ]
+    },
+    {
+     "question_id": 24,
+     "text": "Why should passwords be stored as salted hashes?",
+     "labelled": "medium",
+     "answered": 8,
+     "difficulty_index": 0.62,
+     "discrimination": 0.5,
+     "most_chosen_wrong_option": "c",
+     "flags": []
+    }
+   ]
+  },
+  "results": {
+   "quiz": "REST API Fundamentals",
+   "attempts": [
+    {
+     "id": 1,
+     "user_id": 5,
+     "name": "Demo Student 1",
+     "score": 7,
+     "total": 7,
+     "late": 0,
+     "calibration": 84,
+     "started_at": "2026-10-26 08:16:30",
+     "submitted_at": "2026-10-26 08:24:30"
+    },
+    {
+     "id": 2,
+     "user_id": 6,
+     "name": "Demo Student 2",
+     "score": 6,
+     "total": 7,
+     "late": 0,
+     "calibration": 82,
+     "started_at": "2026-10-31 00:36:30",
+     "submitted_at": "2026-10-31 00:40:30"
+    },
+    {
+     "id": 3,
+     "user_id": 7,
+     "name": "Demo Student 3",
+     "score": 6,
+     "total": 7,
+     "late": 0,
+     "calibration": 87,
+     "started_at": "2026-10-31 03:41:30",
+     "submitted_at": "2026-10-31 03:45:30"
+    },
+    {
+     "id": 4,
+     "user_id": 8,
+     "name": "Demo Student 4",
+     "score": 5,
+     "total": 7,
+     "late": 0,
+     "calibration": 90,
+     "started_at": "2026-10-31 06:17:30",
+     "submitted_at": "2026-10-31 06:26:30"
+    },
+    {
+     "id": 5,
+     "user_id": 9,
+     "name": "Demo Student 5",
+     "score": 5,
+     "total": 7,
+     "late": 0,
+     "calibration": 71,
+     "started_at": "2026-10-30 01:04:30",
+     "submitted_at": "2026-10-30 01:08:30"
+    },
+    {
+     "id": 6,
+     "user_id": 10,
+     "name": "Demo Student 6",
+     "score": 4,
+     "total": 7,
+     "late": 0,
+     "calibration": 61,
+     "started_at": "2026-10-30 00:30:30",
+     "submitted_at": "2026-10-30 00:34:30"
+    },
+    {
+     "id": 7,
+     "user_id": 11,
+     "name": "Demo Student 7",
+     "score": 4,
+     "total": 7,
+     "late": 0,
+     "calibration": 79,
+     "started_at": "2026-10-31 08:18:30",
+     "submitted_at": "2026-10-31 08:25:30"
+    },
+    {
+     "id": 8,
+     "user_id": 12,
+     "name": "Demo Student 8",
+     "score": 2,
+     "total": 7,
+     "late": 0,
+     "calibration": 42,
+     "started_at": "2026-10-31 05:41:30",
+     "submitted_at": "2026-10-31 05:46:30"
+    }
+   ],
+   "average_percent": 69.6,
+   "hardest_questions": [
+    {
+     "id": 23,
+     "text": "Which status code should an API send when a logged-in user is not allowed to do something?",
+     "times": 8,
+     "right_count": 4
+    },
+    {
+     "id": 22,
+     "text": "Which header carries a bearer token?",
+     "times": 8,
+     "right_count": 5
+    },
+    {
+     "id": 24,
+     "text": "Why should passwords be stored as salted hashes?",
+     "times": 8,
+     "right_count": 5
+    }
+   ]
+  },
+  "stats": {
+   "users": 12,
+   "questions": 24,
+   "quizzes": 2,
+   "attempts": 8,
+   "practice_answers": 0
+  }
+ },
+ "openapi": {
+  "paths": 24,
+  "operations": 29,
+  "by_tag": {
+   "users": 6,
+   "question bank": 7,
+   "quizzes": 12,
+   "learning": 4
+  },
+  "list": [
+   {
+    "methods": [
+     "POST"
+    ],
+    "path": "/api/register",
+    "tag": "users",
+    "summary": "Register"
+   },
+   {
+    "methods": [
+     "POST"
+    ],
+    "path": "/api/login",
+    "tag": "users",
+    "summary": "Login"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/me",
+    "tag": "users",
+    "summary": "Me"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/users",
+    "tag": "users",
+    "summary": "List Users"
+   },
+   {
+    "methods": [
+     "DELETE"
+    ],
+    "path": "/api/users/{user_id}",
+    "tag": "users",
+    "summary": "Delete User"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/stats",
+    "tag": "users",
+    "summary": "Stats"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/subjects",
+    "tag": "question bank",
+    "summary": "Subjects"
+   },
+   {
+    "methods": [
+     "GET",
+     "POST"
+    ],
+    "path": "/api/questions",
+    "tag": "question bank",
+    "summary": "List Questions"
+   },
+   {
+    "methods": [
+     "POST"
+    ],
+    "path": "/api/questions/import",
+    "tag": "question bank",
+    "summary": "Import Questions"
+   },
+   {
+    "methods": [
+     "GET",
+     "PUT",
+     "DELETE"
+    ],
+    "path": "/api/questions/{question_id}",
+    "tag": "question bank",
+    "summary": "Get Question"
+   },
+   {
+    "methods": [
+     "POST",
+     "GET"
+    ],
+    "path": "/api/quizzes",
+    "tag": "quizzes",
+    "summary": "Create Quiz"
+   },
+   {
+    "methods": [
+     "POST"
+    ],
+    "path": "/api/quizzes/random",
+    "tag": "quizzes",
+    "summary": "Random Quiz"
+   },
+   {
+    "methods": [
+     "GET",
+     "DELETE"
+    ],
+    "path": "/api/quizzes/{quiz_id}",
+    "tag": "quizzes",
+    "summary": "Get Quiz"
+   },
+   {
+    "methods": [
+     "POST"
+    ],
+    "path": "/api/quizzes/{quiz_id}/start",
+    "tag": "quizzes",
+    "summary": "Start Attempt"
+   },
+   {
+    "methods": [
+     "POST"
+    ],
+    "path": "/api/attempts/{attempt_id}/submit",
+    "tag": "quizzes",
+    "summary": "Submit Attempt"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/attempts/mine",
+    "tag": "quizzes",
+    "summary": "My Attempts"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/quizzes/{quiz_id}/results",
+    "tag": "quizzes",
+    "summary": "Quiz Results"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/quizzes/{quiz_id}/results.csv",
+    "tag": "quizzes",
+    "summary": "Results Csv"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/quizzes/{quiz_id}/analysis",
+    "tag": "quizzes",
+    "summary": "Item Analysis"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/quizzes/{quiz_id}/leaderboard",
+    "tag": "quizzes",
+    "summary": "Leaderboard"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/practice/next",
+    "tag": "learning",
+    "summary": "Practice Next"
+   },
+   {
+    "methods": [
+     "POST"
+    ],
+    "path": "/api/practice/answer",
+    "tag": "learning",
+    "summary": "Practice Answer"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/revision/due",
+    "tag": "learning",
+    "summary": "Revision Due"
+   },
+   {
+    "methods": [
+     "GET"
+    ],
+    "path": "/api/me/mastery",
+    "tag": "learning",
+    "summary": "Mastery"
+   }
+  ]
+ }
+}
